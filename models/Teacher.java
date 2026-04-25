@@ -1,3 +1,8 @@
+package models;
+
+import enums.TeacherPosition;
+import enums.UrgencyLevel;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -52,7 +57,7 @@ public class Teacher extends Employee {
     }
     public String viewStudentInfo(Student student) {
         if (student == null) return "";
-        return "Student " + student.getFullName() + ", ID " + student.getStudentId() + ", major " + student.getMajor() +
+        return "models.Student " + student.getFullName() + ", ID " + student.getStudentId() + ", major " + student.getMajor() +
                 ", year " + student.getYearOfStudy() + ", credits " + student.getCredits() + ", GPA " + student.getGpa();
     }
 }

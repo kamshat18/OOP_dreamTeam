@@ -1,3 +1,5 @@
+package models;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,7 +39,7 @@ public class Transcript {
         return this.gpa = sum / sumCredits;
     }
     public void printTranscript() {
-        System.out.println("Transcript for student " + student.getFullName() + " (" + student.getStudentId() + "):");
+        System.out.println("models.Transcript for student " + student.getFullName() + " (" + student.getStudentId() + "):");
         for (Course course : marks.keySet()) {
             System.out.println(course.toString() + ": " + marks.get(course));
         }

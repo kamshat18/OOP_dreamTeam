@@ -1,4 +1,6 @@
-import model.Users.User;
+package models;
+
+import enums.CourseType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,7 +98,7 @@ public class Student extends User {
     }
     public void joinOrganization(Organization org) {}
     public String toString() {
-        return "Student " + getFullName() + ", ID " + getStudentId() + ", major " + getMajor() +
+        return "models.Student " + getFullName() + ", ID " + getStudentId() + ", major " + getMajor() +
                 ", year " + getYearOfStudy() + ", credits " + getCredits() + ", GPA " + getGpa();
     }
 }

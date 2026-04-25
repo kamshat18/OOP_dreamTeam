@@ -1,3 +1,9 @@
+package models;
+
+import enums.LessonType;
+import enums.ManagerType;
+import enums.SortBy;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;

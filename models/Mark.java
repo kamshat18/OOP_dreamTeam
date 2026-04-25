@@ -1,3 +1,5 @@
+package models;
+
 public class Mark {
     private double firstAttestation;
     private double secondAttestation;
@@ -58,6 +60,6 @@ public class Mark {
     }
     @Override
     public String toString() {
-        return "Mark for " + student.getFullName() + " on " +  course.getTitle() + ": " + firstAttestation + "+" + secondAttestation + "+" + finalExam + "=" + total + " (" + letterGrade + ")";
+        return "models.Mark for " + student.getFullName() + " on " +  course.getTitle() + ": " + firstAttestation + "+" + secondAttestation + "+" + finalExam + "=" + total + " (" + letterGrade + ")";
     }
 }

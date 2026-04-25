@@ -1,3 +1,7 @@
+package models;
+
+import enums.LessonType;
+
 import java.util.Date;
 
 public class Lesson {
@@ -10,7 +14,7 @@ public class Lesson {
     private Teacher teacher;
 
     public String getLessonInfo() {
-        return "Lesson " + course + " (" + lessonId + "), " + type + ". At " + date + ", " + time + ". Room " + room
+        return "models.Lesson " + course + " (" + lessonId + "), " + type + ". At " + date + ", " + time + ". Room " + room
                 + ". Taught by " + teacher.toString();
     }
 

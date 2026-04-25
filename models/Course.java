@@ -1,3 +1,8 @@
+package models;
+
+import enums.CourseType;
+import enums.LessonType;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -99,9 +104,9 @@ public class Course {
 
     @Override
     public String toString() {
-        return "Course " + courseId + ": " + title + " (" + credits + " credits)" +
+        return "models.Course " + courseId + ": " + title + " (" + credits + " credits)" +
                 ". Major: " + major + ", year of study: " + yearOfStudy + ". " +
-                "Course type: " + courseType + ". Lecture teacher: " + (lectureTeacher == null ? "not assigned" : lectureTeacher.getFullName()) +
+                "models.Course type: " + courseType + ". Lecture teacher: " + (lectureTeacher == null ? "not assigned" : lectureTeacher.getFullName()) +
                 ", practice teacher: " + (practiceTeacher == null ? "not assigned" : practiceTeacher.getFullName()) +
                 ". Enrolled students: " + (enrolledStudents == null ? 0 : enrolledStudents.size()) + "/75" +
                 ". Number of lessons: " + (lessons == null ? 0 : lessons.size());

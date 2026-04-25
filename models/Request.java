@@ -1,4 +1,6 @@
-import model.Users.User;
+package models;
+
+import enums.RequestStatus;
 
 import java.util.Date;
 
@@ -14,7 +16,7 @@ public class Request {
         this.status = status;
     }
     public String getRequestInfo() {
-        String s = "Request #" + requestId + " by " + requester.toString() + " created at " + createdDate;
+        String s = "models.Request #" + requestId + " by " + requester.toString() + " created at " + createdDate;
         if (resolvedDate != null) s += ", resolved at " + resolvedDate;
         s += ": " + description;
         return s;
