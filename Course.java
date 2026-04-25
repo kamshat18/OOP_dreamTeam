@@ -13,6 +13,21 @@ public class Course {
     private List<Student> enrolledStudents;
     private List<Lesson> lessons;
 
+    public Course(String courseId, String title, int credits, String major, int yearOfStudy, CourseType courseType) {
+        this.courseId = courseId;
+        this.title = title;
+        this.credits = credits;
+        this.major = major;
+        this.yearOfStudy = yearOfStudy;
+        this.courseType = courseType;
+        this.enrolledStudents = new ArrayList<>();
+        this.lessons = new ArrayList<>();
+    }
+
+    public String getCourseId() {
+        return courseId;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -35,7 +50,7 @@ public class Course {
         return practiceTeacher;
     }
     public List<Student> getEnrolledStudents() {
-        return enrolledStudents;
+        return new ArrayList<>(enrolledStudents);
     }
     public List<Lesson> getLessons() {
         return lessons;
@@ -86,9 +101,21 @@ public class Course {
     public String toString() {
         return "Course " + courseId + ": " + title + " (" + credits + " credits)" +
                 ". Major: " + major + ", year of study: " + yearOfStudy + ". " +
-                "Course type: " + courseType + ". Lecture teacher: " + (lectureTeacher == null ? "not assigned" : lectureTeacher.getName()) +
-                ", practice teacher: " + (practiceTeacher == null ? "not assigned" : practiceTeacher.getName()) +
+                "Course type: " + courseType + ". Lecture teacher: " + (lectureTeacher == null ? "not assigned" : lectureTeacher.getFullName()) +
+                ", practice teacher: " + (practiceTeacher == null ? "not assigned" : practiceTeacher.getFullName()) +
                 ". Enrolled students: " + (enrolledStudents == null ? 0 : enrolledStudents.size()) + "/75" +
                 ". Number of lessons: " + (lessons == null ? 0 : lessons.size());
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Course)) return false;
+        Course course = (Course) o;
+        return java.util.Objects.equals(courseId, course.courseId);
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hash(courseId);
     }
 }

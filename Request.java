@@ -1,3 +1,5 @@
+import model.Users.User;
+
 import java.util.Date;
 
 public class Request {

@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Teacher extends Employee {
@@ -6,12 +7,14 @@ public class Teacher extends Employee {
     private TeacherPosition position;
     private List<Course> taughtCourses;
 
-    public Teacher(String teacherId, TeacherPosition position, List<Course> taughtCourses) {
-        super();
+    public Teacher(String id, String fullName, String email, String password, String language,
+                   double salary, Date hireDate, String employeeId,
+                   String teacherId, TeacherPosition position, List<Course> taughtCourses) {
+        super(id, fullName, email, password, language, salary, hireDate, employeeId);
+
         this.teacherId = teacherId;
         this.position = position;
-        if (taughtCourses == null) this.taughtCourses = new ArrayList<>();
-        else this.taughtCourses = taughtCourses;
+        this.taughtCourses = (taughtCourses == null) ? new ArrayList<>() : taughtCourses;
     }
     public void putMark(Student student, Course course, Mark mark) {
         if (student == null || course == null || mark == null) return;
@@ -49,7 +52,7 @@ public class Teacher extends Employee {
     }
     public String viewStudentInfo(Student student) {
         if (student == null) return "";
-        return "Student " + student.getName() + ", ID " + student.getStudentId() + ", major " + student.getMajor() +
+        return "Student " + student.getFullName() + ", ID " + student.getStudentId() + ", major " + student.getMajor() +
                 ", year " + student.getYearOfStudy() + ", credits " + student.getCredits() + ", GPA " + student.getGpa();
     }
 }

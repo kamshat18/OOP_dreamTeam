@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 public class Manager extends Employee {
@@ -9,14 +10,40 @@ public class Manager extends Employee {
     private List<Teacher> teachers = new ArrayList<>();
     private List<Request> requests = new ArrayList<>();
 
-    public void assignCourseToTeacher(Course course, Teacher teacher) {
-        if (course == null || teacher == null) return;
-//        if (teachers.contains(teacher)) return;
-        if (course.getLectureTeacher() == null) course.setLectureTeacher(teacher);
-        else if (course.getPracticeTeacher() == null)course.setPracticeTeacher(teacher);
-        else throw new IllegalArgumentException("Course already has two teachers");
+
+    public Manager(String id, String fullName, String email, String password, String language,
+                   double salary, Date hireDate, String employeeId,
+                   ManagerType managerType, String department) {
+        super(id, fullName, email, password, language, salary, hireDate, employeeId);
+
+        this.managerType = managerType;
+        this.department = department;
+    }
+
+    public void addStudent(Student student) {
+        if (student != null && !students.contains(student)) {
+            students.add(student);
+        }
+    }
+    public void addTeacher(Teacher teacher) {
+        if (teacher != null && !teachers.contains(teacher)) {
+            teachers.add(teacher);
+        }
+
+    }
+
+    public void assignCourseToTeacher(Course course, Teacher teacher, LessonType lessonType) {
+        if (course == null || teacher == null || lessonType == null) return;
+        if (lessonType == LessonType.LECTURE) {
+            course.setLectureTeacher(teacher);
+        } else if (lessonType == LessonType.PRACTICE) {
+            course.setPracticeTeacher(teacher);
+        }
         teacher.manageCourse(course);
-        teachers.add(teacher);
+
+        if (!teachers.contains(teacher)) {
+            teachers.add(teacher);
+        }
     }
     public boolean approveRegistration(Student student, Course course) {
         if (student == null || course == null) return false;
@@ -46,7 +73,7 @@ public class Manager extends Employee {
     }
     public List<Student> viewAllStudents(SortBy sortBy) {
         List<Student> studentsSorted = new ArrayList<>(students);
-        if (sortBy == SortBy.NAME) studentsSorted.sort(Comparator.comparing(Student::getName));
+        if (sortBy == SortBy.NAME) studentsSorted.sort(Comparator.comparing(Student::getFullName));
         if (sortBy == SortBy.ID) studentsSorted.sort(Comparator.comparing(Student::getStudentId));
         if (sortBy == SortBy.GPA) studentsSorted.sort(Comparator.comparingDouble(Student::getGpa));
         return studentsSorted;

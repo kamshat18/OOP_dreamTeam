@@ -1,3 +1,5 @@
+import model.Users.User;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,9 +36,10 @@ public class Student extends User {
     void setMarks(List<Mark> marks) {
         this.marks = marks;
     }
-    public Student(String studentId, String major, int eyarOfStudy, double gpa, int credits,
+    public Student(String id, String fullName, String email, String password, String language,
+                   String studentId, String major, int eyarOfStudy, double gpa, int credits,
                    List<Course> enrolledCourses, List<Mark> marks) {
-        super();
+        super(id, fullName, email, password, language);
         this.studentId = studentId;
         this.major = major;
         this.eyarOfStudy = eyarOfStudy;
@@ -51,9 +54,13 @@ public class Student extends User {
     public boolean registerCourse(Course course) {
         if (course == null || enrolledCourses.contains(course)) return false;
         if (credits + course.getCredits() > 21) return false;
+        if (course.getYearOfStudy() != 0 && eyarOfStudy != course.getYearOfStudy()) return false;
         int countRetakes = 0;
         for (Mark mark : marks) {
-            if (mark.getCourse().equals(course) && "F".equals(mark.getLetterGrade())) countRetakes++;
+            if (mark != null &&
+                    mark.getCourse() != null &&
+                    mark.getCourse().equals(course) &&
+                    "F".equals(mark.getLetterGrade())) countRetakes++;
         }
         if (countRetakes >= 3) return false;
         if (course.getCourseType() == CourseType.MAJOR && !major.equals(course.getMajor())) return false;
@@ -89,7 +96,7 @@ public class Student extends User {
     }
     public void joinOrganization(Organization org) {}
     public String toString() {
-        return "Student " + getName() + ", ID " + getStudentId() + ", major " + getMajor() +
+        return "Student " + getFullName() + ", ID " + getStudentId() + ", major " + getMajor() +
                 ", year " + getYearOfStudy() + ", credits " + getCredits() + ", GPA " + getGpa();
     }
 }

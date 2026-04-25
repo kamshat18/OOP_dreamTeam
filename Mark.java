@@ -58,6 +58,6 @@ public class Mark {
     }
     @Override
     public String toString() {
-        return "Mark for " + student.getName() + " on " +  course.getTitle() + ": " + firstAttestation + "+" + secondAttestation + "+" + finalExam + "=" + total + " (" + letterGrade + ")";
+        return "Mark for " + student.getFullName() + " on " +  course.getTitle() + ": " + firstAttestation + "+" + secondAttestation + "+" + finalExam + "=" + total + " (" + letterGrade + ")";
     }
 }
