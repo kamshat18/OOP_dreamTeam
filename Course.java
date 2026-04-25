@@ -66,7 +66,7 @@ public class Course {
         lessons = new ArrayList<>();
     }
 
-    public boolean addStudent(Student student) {
+    boolean addStudent(Student student) {
         if (enrolledStudents.contains(student)) return false;
         return enrolledStudents.add(student);
     }
@@ -80,5 +80,15 @@ public class Course {
     public Teacher getTeacherForLessonType(LessonType type) {
         if (type == LessonType.LECTURE) return lectureTeacher;
         return practiceTeacher;
+    }
+
+    @Override
+    public String toString() {
+        return "Course " + courseId + ": " + title + " (" + credits + " credits)" +
+                ". Major: " + major + ", year of study: " + yearOfStudy + ". " +
+                "Course type: " + courseType + ". Lecture teacher: " + (lectureTeacher == null ? "not assigned" : lectureTeacher.getName()) +
+                ", practice teacher: " + (practiceTeacher == null ? "not assigned" : practiceTeacher.getName()) +
+                ". Enrolled students: " + (enrolledStudents == null ? 0 : enrolledStudents.size()) + "/75" +
+                ". Number of lessons: " + (lessons == null ? 0 : lessons.size());
     }
 }

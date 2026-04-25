@@ -42,8 +42,10 @@ public class Student extends User {
         this.eyarOfStudy = eyarOfStudy;
         this.gpa = gpa;
         this.credits = credits;
-        this.enrolledCourses = enrolledCourses;
-        this.marks = marks;
+        if (enrolledCourses == null) this.enrolledCourses = new ArrayList<>();
+        else this.enrolledCourses = enrolledCourses;
+        if (marks == null) this.marks = new ArrayList<>();
+        else this.marks = marks;
     }
 
     public boolean registerCourse(Course course) {

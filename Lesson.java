@@ -13,4 +13,9 @@ public class Lesson {
         return "Lesson " + course + " (" + lessonId + "), " + type + ". At " + date + ", " + time + ". Room " + room
                 + ". Taught by " + teacher.toString();
     }
+
+    @Override
+    public String toString() {
+        return getLessonInfo();
+    }
 }

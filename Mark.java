@@ -56,4 +56,8 @@ public class Mark {
         else letterGrade = "F";
         return letterGrade;
     }
+    @Override
+    public String toString() {
+        return "Mark for " + student.getName() + " on " +  course.getTitle() + ": " + firstAttestation + "+" + secondAttestation + "+" + finalExam + "=" + total + " (" + letterGrade + ")";
+    }
 }

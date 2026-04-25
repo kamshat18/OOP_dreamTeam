@@ -22,8 +22,16 @@ public class Teacher extends Employee {
         mark.calculateTotal();
         mark.calculateLetterGrade();
         List<Mark> newMarks = student.getMarks();
+        if (newMarks == null) return;
+        for (int i = 0; i < newMarks.size(); i++) {
+            Mark markI = newMarks.get(i);
+            if (markI != null && markI.getCourse() != null && markI.getCourse().equals(course)) {
+                newMarks.set(i, mark);
+                return;
+            }
+        }
         newMarks.add(mark);
-        student.setMarks(newMarks);
+//        student.setMarks(newMarks);
     }
     public void manageCourse(Course course) {
         if (course == null) return;

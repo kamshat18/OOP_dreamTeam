@@ -11,7 +11,7 @@ public class Manager extends Employee {
 
     public void assignCourseToTeacher(Course course, Teacher teacher) {
         if (course == null || teacher == null) return;
-        if (teachers.contains(teacher)) return;
+//        if (teachers.contains(teacher)) return;
         if (course.getLectureTeacher() == null) course.setLectureTeacher(teacher);
         else if (course.getPracticeTeacher() == null)course.setPracticeTeacher(teacher);
         else throw new IllegalArgumentException("Course already has two teachers");

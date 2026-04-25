@@ -29,9 +29,12 @@ public class Transcript {
 
     public double calculateGPA() {
         if (marks.isEmpty()) return 0;
-        double sum = 0;
-        for (Mark mark : marks.values()) sum += mark.getTotal() * mark.getCourse().getCredits();
-        return this.gpa = sum / marks.size();
+        double sum = 0, sumCredits = 0;
+        for (Mark mark : marks.values()) {
+            sum += mark.getTotal() * mark.getCourse().getCredits();
+            sumCredits += mark.getCourse().getCredits();
+        }
+        return this.gpa = sum / sumCredits;
     }
     public void printTranscript() {
         System.out.println("Transcript for student " + student.getName() + " (" + student.getStudentId() + "):");
