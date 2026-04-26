@@ -38,9 +38,11 @@ public class Transcript {
 
     public Transcript(Student student, Map<Course, Mark> marks, double gpa, Date generatedDate) {
         this.student = student;
-        this.marks = marks;
+        if (marks == null) this.marks = new HashMap<>();
+        else this.marks = marks;
         this.gpa = gpa;
-        this.generatedDate = generatedDate;
+        if (generatedDate == null) this.generatedDate = new Date();
+        else this.generatedDate = generatedDate;
     }
 
     public Transcript(Student student) {
@@ -56,8 +58,10 @@ public class Transcript {
     }
 
     private double gradeToPoints(Mark mark) {
+        if (mark == null) return 0;
         mark.calculateLetterGrade();
         String letter = mark.getLetterGrade();
+        if (letter == null) return 0;
         switch (letter) {
             case "A":
                 return 4.00;
@@ -88,6 +92,7 @@ public class Transcript {
         if (marks == null || marks.isEmpty()) return this.gpa = 0;
         double sum = 0, sumCredits = 0;
         for (Mark mark : marks.values()) {
+            if (mark == null) continue;
             sum += gradeToPoints(mark) * mark.getCourse().getCredits();
             sumCredits += mark.getCourse().getCredits();
         }

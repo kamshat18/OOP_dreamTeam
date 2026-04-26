@@ -71,4 +71,8 @@ public class Teacher extends Employee {
     public int hashCode() {
         return java.util.Objects.hash(teacherId);
     }
+    @Override
+    public String toString() {
+        return "models.Teacher " + getFullName() + " with ID " + teacherId + ", position " + position + ", number taught courses " + (taughtCourses == null ? 0 : taughtCourses.size());
+    }
 }

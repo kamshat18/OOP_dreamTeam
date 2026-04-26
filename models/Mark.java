@@ -61,6 +61,6 @@ public class Mark {
     }
     @Override
     public String toString() {
-        return "models.Mark for " + student.getFullName() + " on " +  course.getTitle() + ": " + firstAttestation + "+" + secondAttestation + "+" + finalExam + "=" + total + " (" + letterGrade + ")";
+        return "models.Mark for " + (student == null ? "N/A" : student.getFullName()) + " on " +  (course == null ? "N/A" : course.getTitle()) + ": " + firstAttestation + "+" + secondAttestation + "+" + finalExam + "=" + total + " (" + letterGrade + ")";
     }
 }

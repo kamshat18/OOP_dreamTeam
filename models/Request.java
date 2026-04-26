@@ -16,7 +16,7 @@ public class Request {
         this.status = status;
     }
     public String getRequestInfo() {
-        String s = "models.Request #" + requestId + " by " + requester.toString() + " created at " + createdDate;
+        String s = "models.Request #" + requestId + " by " + (requester == null ? "anonym" : requester.toString()) + " created at " + createdDate;
         if (resolvedDate != null) s += ", resolved at " + resolvedDate;
         s += ": " + description;
         return s;

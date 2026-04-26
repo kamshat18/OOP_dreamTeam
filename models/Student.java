@@ -85,7 +85,10 @@ public class Student extends User {
     }
     public Transcript viewTranscript() {
         Transcript transcript = new Transcript(this);
-        for (Mark mark : marks) transcript.addMark(mark.getCourse(), mark);
+        for (Mark mark : marks) {
+            if (mark == null || mark.getCourse() == null) continue;
+            transcript.addMark(mark.getCourse(), mark);
+        }
         transcript.calculateGPA();
         return transcript;
     }

@@ -14,8 +14,9 @@ public class Lesson {
     private Teacher teacher;
 
     public String getLessonInfo() {
-        return "models.Lesson " + course + " (" + lessonId + "), " + type + ". At " + date + ", " + time + ". Room " + room
-                + ". Taught by " + teacher.toString();
+        return "models.Lesson " + (course == null ? "N/A" : course.getTitle()) + " (" + lessonId + "), " + type +
+                ". At " + date + ", " + time + ". Room " + room
+                + ". Taught by " + (teacher == null ? "nobody" : teacher.toString());
     }
 
     @Override
