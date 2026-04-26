@@ -60,4 +60,15 @@ public class Teacher extends Employee {
         return "models.Student " + student.getFullName() + ", ID " + student.getStudentId() + ", major " + student.getMajor() +
                 ", year " + student.getYearOfStudy() + ", credits " + student.getCredits() + ", GPA " + student.getGpa();
     }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o instanceof Teacher && java.util.Objects.equals(teacherId, ((Teacher) o).teacherId)) return true;
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hash(teacherId);
+    }
 }

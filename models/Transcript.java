@@ -10,6 +10,32 @@ public class Transcript {
     private double gpa;
     private Date generatedDate;
 
+    public Student getStudent() {
+        return student;
+    }
+    public Map<Course, Mark> getMarks() {
+        return marks;
+    }
+    public double getGpa() {
+        return gpa;
+    }
+    public Date getGeneratedDate() {
+        return generatedDate;
+    }
+    public void setStudent(Student student) {
+        this.student = student;
+    }
+    public void setMarks(Map<Course, Mark> marks) {
+        if (marks == null) this.marks = new HashMap<>();
+        else this.marks = marks;
+    }
+    public void setGpa(double gpa) {
+        this.gpa = gpa;
+    }
+    public void setGeneratedDate(Date generatedDate) {
+        this.generatedDate = generatedDate;
+    }
+
     public Transcript(Student student, Map<Course, Mark> marks, double gpa, Date generatedDate) {
         this.student = student;
         this.marks = marks;
@@ -29,14 +55,45 @@ public class Transcript {
         calculateGPA();
     }
 
+    private double gradeToPoints(Mark mark) {
+        mark.calculateLetterGrade();
+        String letter = mark.getLetterGrade();
+        switch (letter) {
+            case "A":
+                return 4.00;
+            case "A-":
+                return 3.67;
+            case "B+":
+                return 3.33;
+            case "B":
+                return 3.00;
+            case "B-":
+                return 2.67;
+            case "C+":
+                return 2.33;
+            case "C":
+                return 2.00;
+            case "C-":
+                return 1.67;
+            case "D+":
+                return 1.33;
+            case "D":
+                return 1.00;
+            default:
+                return 0.00;
+        }
+    }
+
     public double calculateGPA() {
-        if (marks.isEmpty()) return 0;
+        if (marks == null || marks.isEmpty()) return this.gpa = 0;
         double sum = 0, sumCredits = 0;
         for (Mark mark : marks.values()) {
-            sum += mark.getTotal() * mark.getCourse().getCredits();
+            sum += gradeToPoints(mark) * mark.getCourse().getCredits();
             sumCredits += mark.getCourse().getCredits();
         }
-        return this.gpa = sum / sumCredits;
+        if (sumCredits == 0) setGpa(0);
+        else setGpa(sum / sumCredits);
+        return this.gpa;
     }
     public void printTranscript() {
         System.out.println("models.Transcript for student " + student.getFullName() + " (" + student.getStudentId() + "):");

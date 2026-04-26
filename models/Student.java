@@ -101,4 +101,15 @@ public class Student extends User {
         return "models.Student " + getFullName() + ", ID " + getStudentId() + ", major " + getMajor() +
                 ", year " + getYearOfStudy() + ", credits " + getCredits() + ", GPA " + getGpa();
     }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o instanceof Student && java.util.Objects.equals(studentId, ((Student) o).studentId)) return true;
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hash(studentId);
+    }
 }

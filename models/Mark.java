@@ -13,6 +13,7 @@ public class Mark {
         return total;
     }
     public String getLetterGrade() {
+        if (letterGrade == null) calculateLetterGrade();
         return letterGrade;
     }
     public Course getCourse() {

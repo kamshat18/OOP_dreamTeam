@@ -42,7 +42,8 @@ public class Manager extends Employee {
         if (course == null || teacher == null || lessonType == null) return;
         if (lessonType == LessonType.LECTURE) {
             course.setLectureTeacher(teacher);
-        } else if (lessonType == LessonType.PRACTICE) {
+        }
+        else if (lessonType == LessonType.PRACTICE) {
             course.setPracticeTeacher(teacher);
         }
         teacher.manageCourse(course);

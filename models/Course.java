@@ -114,9 +114,8 @@ public class Course {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Course)) return false;
-        Course course = (Course) o;
-        return java.util.Objects.equals(courseId, course.courseId);
+        if (o instanceof Course && java.util.Objects.equals(courseId, ((Course) o).courseId)) return true;
+        return false;
     }
 
     @Override
