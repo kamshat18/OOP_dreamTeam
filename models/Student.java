@@ -32,7 +32,7 @@ public class Student extends User {
     public List<Course> getEnrolledCourses() {
         return enrolledCourses;
     }
-    List<Mark> getMarks() {
+    public List<Mark> getMarks() {
         return marks;
     }
     void setMarks(List<Mark> marks) {
@@ -65,7 +65,12 @@ public class Student extends User {
                     "F".equals(mark.getLetterGrade())) countRetakes++;
         }
         if (countRetakes >= 3) return false;
-        if (course.getCourseType() == CourseType.MAJOR && !major.equals(course.getMajor())) return false;
+        if (course.getCourseType() == CourseType.MAJOR) {
+            if (major == null || !major.equals(course.getMajor())) return false;
+        }
+        if (course.getCourseType() == CourseType.MINOR) {
+            if (major == null || course.getMajor() == null || !major.equals(course.getMajor()))return false;
+        }
         if (course.getAvailableSeats() <= 0) return false;
         if (!course.addStudent(this)) return false;
         enrolledCourses.add(course);
@@ -99,7 +104,10 @@ public class Student extends User {
     public Transcript getTranscript() {
         return viewTranscript();
     }
-    public void joinOrganization(Organization org) {}
+    public void joinOrganization(Organization org) {
+        if (org == null) return;
+        org.addMember(this);
+    }
     public String toString() {
         return "models.Student " + getFullName() + ", ID " + getStudentId() + ", major " + getMajor() +
                 ", year " + getYearOfStudy() + ", credits " + getCredits() + ", GPA " + getGpa();

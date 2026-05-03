@@ -22,6 +22,10 @@ public class Mark {
     public Student getStudent() {
         return student;
     }
+    public double getFirstAttestation() { return firstAttestation; }
+    public double getSecondAttestation() { return secondAttestation; }
+    public double getFinalExam() { return finalExam; }
+
     public void setFirstAttestation(double firstAttestation) {
         this.firstAttestation = firstAttestation;
     }
@@ -39,6 +43,13 @@ public class Mark {
     }
     public void setStudent(Student student) {
         this.student = student;
+    }
+    public Mark(double firstAttestation, double secondAttestation, double finalExam) {
+        this.firstAttestation = firstAttestation;
+        this.secondAttestation = secondAttestation;
+        this.finalExam = finalExam;
+        calculateTotal();
+        calculateLetterGrade();
     }
     public double calculateTotal() {
         this.total = firstAttestation + secondAttestation + finalExam;

@@ -11,6 +11,15 @@ public class Teacher extends Employee {
     private String teacherId;
     private TeacherPosition position;
     private List<Course> taughtCourses;
+    public String getTeacherId() {
+        return teacherId;
+    }
+    public TeacherPosition getPosition() {
+        return position;
+    }
+    public List<Course> getTaughtCourses() {
+        return new ArrayList<>(taughtCourses);
+    }
 
     public Teacher(String id, String fullName, String email, String password, String language,
                    double salary, Date hireDate, String employeeId,

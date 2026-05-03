@@ -14,7 +14,7 @@ public class Transcript {
         return student;
     }
     public Map<Course, Mark> getMarks() {
-        return marks;
+        return new HashMap<>(marks);
     }
     public double getGpa() {
         return gpa;
@@ -92,7 +92,7 @@ public class Transcript {
         if (marks == null || marks.isEmpty()) return this.gpa = 0;
         double sum = 0, sumCredits = 0;
         for (Mark mark : marks.values()) {
-            if (mark == null) continue;
+            if (mark == null || mark.getCourse() == null) continue;
             sum += gradeToPoints(mark) * mark.getCourse().getCredits();
             sumCredits += mark.getCourse().getCredits();
         }

@@ -58,7 +58,7 @@ public class Course {
         return new ArrayList<>(enrolledStudents);
     }
     public List<Lesson> getLessons() {
-        return lessons;
+        return new ArrayList<>(lessons);
     }
     public void setTitle(String title) {
         this.title = title;
@@ -86,11 +86,13 @@ public class Course {
         lessons = new ArrayList<>();
     }
 
-    boolean addStudent(Student student) {
+    public boolean addStudent(Student student) {
+        if (student == null) return false;
         if (enrolledStudents.contains(student)) return false;
         return enrolledStudents.add(student);
     }
     public boolean removeStudent(Student student) {
+        if (student == null) return false;
         if (!enrolledStudents.contains(student)) return false;
         return enrolledStudents.remove(student);
     }
