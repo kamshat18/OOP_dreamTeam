@@ -8,6 +8,7 @@ public class User implements Serializable {
     private String email;
     private String password;
     private String language;
+    private boolean loggedIn;
     public User(String id, String fullName, String email, String password, String language) {
         this.id = id;
         this.fullName = fullName;
@@ -30,6 +31,24 @@ public class User implements Serializable {
     }
     public String getLanguage() {
         return language;
+    }
+    public boolean login(String email, String password) {
+        if (email == null || password == null) {
+            return false;
+        }
+        loggedIn = this.email.equals(email) && this.password.equals(password);
+        return loggedIn;
+    }
+    public void logout() {
+        loggedIn = false;
+    }
+    public void changePassword(String newPassword) {
+        if (newPassword != null && !newPassword.isBlank()) {
+            this.password = newPassword;
+        }
+    }
+    public boolean isLoggedIn() {
+        return loggedIn;
     }
     @Override
     public String toString(){
