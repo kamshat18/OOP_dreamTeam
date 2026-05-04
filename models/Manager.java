@@ -52,6 +52,12 @@ public class Manager extends Employee {
             teachers.add(teacher);
         }
     }
+
+    public void assignCourseToTeacher(Course course, Teacher teacher) {
+        if (course == null || teacher == null) return;
+        if (course.getLectureTeacher() == null) assignCourseToTeacher(course, teacher, LessonType.LECTURE);
+        else assignCourseToTeacher(course, teacher, LessonType.PRACTICE);
+    }
     public boolean approveRegistration(Student student, Course course) {
         if (student == null || course == null) return false;
         return student.registerCourse(course);
@@ -79,6 +85,7 @@ public class Manager extends Employee {
     }
     public void manageNews(News news, String action) {
         if (news == null || action == null) return;
+        if (action.equalsIgnoreCase("pin")) news.pin();
     }
     public List<Student> viewAllStudents(SortBy sortBy) {
         List<Student> studentsSorted = new ArrayList<>(students);

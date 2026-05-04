@@ -8,7 +8,7 @@ import java.util.List;
 public class Student extends User {
     private final String studentId;
     private String major;
-    private int eyarOfStudy;
+    private int yearOfStudy;
     private double gpa;
     private int credits;
     private List<Course> enrolledCourses;
@@ -21,7 +21,7 @@ public class Student extends User {
         return major;
     }
     public int getYearOfStudy() {
-        return eyarOfStudy;
+        return yearOfStudy;
     }
     public double getGpa() {
         return gpa;
@@ -30,7 +30,7 @@ public class Student extends User {
         return credits;
     }
     public List<Course> getEnrolledCourses() {
-        return enrolledCourses;
+        return new ArrayList<>(enrolledCourses);
     }
     public List<Mark> getMarks() {
         return marks;
@@ -39,12 +39,12 @@ public class Student extends User {
         this.marks = marks;
     }
     public Student(String id, String fullName, String email, String password, String language,
-                   String studentId, String major, int eyarOfStudy, double gpa, int credits,
+                   String studentId, String major, int yearOfStudy, double gpa, int credits,
                    List<Course> enrolledCourses, List<Mark> marks) {
         super(id, fullName, email, password, language);
         this.studentId = studentId;
         this.major = major;
-        this.eyarOfStudy = eyarOfStudy;
+        this.yearOfStudy = yearOfStudy;
         this.gpa = gpa;
         this.credits = credits;
         if (enrolledCourses == null) this.enrolledCourses = new ArrayList<>();
@@ -56,7 +56,7 @@ public class Student extends User {
     public boolean registerCourse(Course course) {
         if (course == null || enrolledCourses.contains(course)) return false;
         if (credits + course.getCredits() > 21) return false;
-        if (course.getYearOfStudy() != 0 && eyarOfStudy != course.getYearOfStudy()) return false;
+        if (course.getYearOfStudy() != 0 && yearOfStudy != course.getYearOfStudy()) return false;
         int countRetakes = 0;
         for (Mark mark : marks) {
             if (mark != null &&
@@ -66,10 +66,10 @@ public class Student extends User {
         }
         if (countRetakes >= 3) return false;
         if (course.getCourseType() == CourseType.MAJOR) {
-            if (major == null || !major.equals(course.getMajor())) return false;
+            if (major == null || course.getMajor() == null || !major.equals(course.getMajor())) return false;
         }
         if (course.getCourseType() == CourseType.MINOR) {
-            if (major == null || course.getMajor() == null || !major.equals(course.getMajor()))return false;
+            if (major == null || course.getMajor() == null || major.equals(course.getMajor()))return false;
         }
         if (course.getAvailableSeats() <= 0) return false;
         if (!course.addStudent(this)) return false;

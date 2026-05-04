@@ -105,5 +105,6 @@ public class Transcript {
         for (Course course : marks.keySet()) {
             System.out.println(course.toString() + ": " + marks.get(course));
         }
+        System.out.println("GPA: " + calculateGPA());
     }
 }

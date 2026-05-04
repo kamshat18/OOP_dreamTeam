@@ -100,6 +100,7 @@ public class Course {
         return 75 - enrolledStudents.size();
     }
     public Teacher getTeacherForLessonType(LessonType type) {
+        if (type == null) return null;
         if (type == LessonType.LECTURE) return lectureTeacher;
         return practiceTeacher;
     }

@@ -28,12 +28,18 @@ public class Mark {
 
     public void setFirstAttestation(double firstAttestation) {
         this.firstAttestation = firstAttestation;
+        calculateTotal();
+        calculateLetterGrade();
     }
     public void setSecondAttestation(double secondAttestation) {
         this.secondAttestation = secondAttestation;
+        calculateTotal();
+        calculateLetterGrade();
     }
     public void setFinalExam(double finalExam) {
         this.finalExam = finalExam;
+        calculateTotal();
+        calculateLetterGrade();
     }
     public void setTotal(double total) {
         this.total = total;

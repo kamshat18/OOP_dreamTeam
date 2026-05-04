@@ -62,7 +62,12 @@ public class Teacher extends Employee {
     }
     public void sendComplaint(Student student, UrgencyLevel urgency, String reason) {
         if (student == null || urgency == null || reason == null || reason.isEmpty()) return;
-        System.out.println("Complaint from " + student.toString() + ", urgency " + urgency + ": " + reason);
+        Request request = new Request(
+                "Request #" + System.currentTimeMillis(),
+                "Complaint about student " + student.getFullName() + ", urgency " + urgency + ": " + reason,
+                this
+        );
+        System.out.println(request.getRequestInfo());
     }
     public String viewStudentInfo(Student student) {
         if (student == null) return "";
