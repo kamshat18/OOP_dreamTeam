@@ -1,366 +1,635 @@
 import comparators.UniversityComparators;
+
 import enums.AttendanceStatus;
 import enums.CourseType;
-import enums.Degree;
-import enums.Format;
 import enums.Language;
 import enums.LessonType;
 import enums.ManagerType;
 import enums.NewsType;
-import enums.OrganizationRole;
 import enums.RequestStatus;
 import enums.SortBy;
 import enums.TeacherPosition;
 import enums.UrgencyLevel;
-import exceptions.NotResearcherException;
-import exceptions.SupervisorException;
-import interfaces.Observable;
-import interfaces.Observer;
-import interfaces.Printable;
-import interfaces.Ratable;
-import interfaces.Researcher;
+
 import models.Admin;
-import models.AuthenticationService;
-import models.AttendanceRecord;
-import models.AttendanceService;
-import models.Comment;
 import models.Course;
 import models.Employee;
-import models.GraduateStudent;
-import models.Journal;
-import models.Lesson;
 import models.Manager;
 import models.Mark;
-import models.MasterStudent;
-import models.Message;
-import models.MessageService;
 import models.News;
-import models.NewsGenerator;
-import models.OfficialMessage;
 import models.Organization;
-import models.PhDStudent;
-import models.Report;
 import models.Request;
-import models.ResearchAnalytics;
-import models.ResearchEmployee;
 import models.ResearchPaper;
-import models.ResearchProject;
-import models.RoomBooking;
 import models.Student;
-import models.Subscription;
 import models.Teacher;
-import models.TeacherRating;
 import models.TechSupportSpecialist;
 import models.Transcript;
 import models.User;
-import models.UserLog;
-import patterns.DataStorage;
-import patterns.CommandInvoker;
-import patterns.ComparatorSortingStrategy;
-import patterns.RequestStatusCommand;
-import patterns.SortingUtils;
-import patterns.SortingStrategy;
 
-import java.io.File;
+import models.AttendanceService;
+import patterns.DataStorage;
+import models.TeacherRating;
+
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) {
-        Date now = new Date();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(now);
-        int currentYear = calendar.get(Calendar.YEAR);
+    private static final Scanner scanner = new Scanner(System.in);
+    private static User currentUser = null;
+    private static DataStorage storage = DataStorage.getInstance();
+    private static final List<News> news = new ArrayList<>();
+    private static final List<Request> requests = new ArrayList<>();
 
-        User user = new User("u1", "Simple User", "user@uni.kz", "123", Language.EN.name());
-        user.switchLanguage(Language.RU);
-        Employee employee = new Employee("e1", "Base Employee", "employee@uni.kz", "123", Language.EN.name(), 250000, now, "EMP-1");
-        ResearchEmployee researchEmployee = new ResearchEmployee("re1", "Research Employee", "research@uni.kz", "123", Language.EN.name(), 500000, now, "RES-1");
-        Admin admin = new Admin("a1", "System Admin", "admin@uni.kz", "123", Language.EN.name(), 400000, now, "ADM-1");
-        Manager manager = new Manager("m1", "Academic Manager", "manager@uni.kz", "123", Language.EN.name(), 450000, now, "MAN-1", ManagerType.DEPARTMENT_MANAGER, "SITE");
-        TechSupportSpecialist support = new TechSupportSpecialist("ts1", "Tech Support", "support@uni.kz", "123", Language.EN.name(), 300000, now, "SUP-1");
+    public static void main(String[] args) {
+        System.out.println("+======================================+");
+        System.out.println("|   UNIVERSITY INFORMATION SYSTEM      |");
+        System.out.println("+======================================+");
+
+        seedData();
+
+        while (true) {
+            if (currentUser == null) {
+                showLoginMenu();
+            } else if (currentUser instanceof Admin) {
+                showAdminMenu((Admin) currentUser);
+            } else if (currentUser instanceof Teacher) {
+                showTeacherMenu((Teacher) currentUser);
+            } else if (currentUser instanceof Student) {
+                showStudentMenu((Student) currentUser);
+            } else if (currentUser instanceof Manager) {
+                showManagerMenu((Manager) currentUser);
+            } else if (currentUser instanceof TechSupportSpecialist) {
+                showTechSupportMenu((TechSupportSpecialist) currentUser);
+            }
+        }
+    }
+
+    // =========================================================
+    // LOGIN MENU
+    // =========================================================
+    private static void showLoginMenu() {
+        System.out.println("\n--- Login ---");
+        System.out.print("Login: ");
+        String login = scanner.nextLine().trim();
+        System.out.print("Password: ");
+        String password = scanner.nextLine().trim();
+
+        Optional<User> user = storage.getUsers().stream()
+                .filter(u -> u.login(login, password))
+                .findFirst();
+        if (user.isPresent()) {
+            currentUser = user.get();
+            System.out.println("\nWelcome, " + currentUser.getFullName() + "!");
+        } else {
+            System.out.println("Invalid login or password. Please try again.");
+        }
+    }
+
+    // =========================================================
+    // ADMIN MENU
+    // =========================================================
+    private static void showAdminMenu(Admin admin) {
+        System.out.println("\n+-- ADMIN MENU --+");
+        System.out.println("  1. Add user");
+        System.out.println("  2. Remove user");
+        System.out.println("  3. View all users");
+        System.out.println("  4. Send message");
+        System.out.println("  5. View inbox");
+        System.out.println("  6. Generate system report");
+        System.out.println("  0. Logout");
+        System.out.print("Choice: ");
+
+        switch (scanner.nextLine().trim()) {
+            case "1" -> {
+                System.out.print("Type (student/teacher/manager/admin/tech): ");
+                String type = scanner.nextLine().trim();
+                System.out.print("ID: ");
+                String id = scanner.nextLine().trim();
+                System.out.print("Name: ");
+                String name = scanner.nextLine().trim();
+                System.out.print("Login: ");
+                String login = scanner.nextLine().trim();
+                System.out.print("Password: ");
+                String password = scanner.nextLine().trim();
+
+                User newUser = createUserByType(type, id, name, login, password);
+                if (newUser != null) {
+                    admin.addUser(newUser);
+                    storage.addUser(newUser);
+                    System.out.println("User added successfully!");
+                }
+            }
+            case "2" -> {
+                System.out.print("Login of user to remove: ");
+                admin.removeUser(scanner.nextLine().trim());
+            }
+            case "3" -> storage.getUsers().forEach(System.out::println);
+            case "4" -> sendMessageMenu(admin);
+            case "5" -> printMessages(admin);
+            case "6" -> System.out.println(admin.generateSystemReport());
+            case "0" -> logout();
+            default -> System.out.println("Invalid choice.");
+        }
+    }
+
+    // =========================================================
+    // TEACHER MENU
+    // =========================================================
+    private static void showTeacherMenu(Teacher teacher) {
+        System.out.println("\n+-- TEACHER MENU --+");
+        System.out.println("  1. My courses");
+        System.out.println("  2. Put mark for student");
+        System.out.println("  3. View students in course");
+        System.out.println("  4. My research papers");
+        System.out.println("  5. Add research paper");
+        System.out.println("  6. View my rating");
+        System.out.println("  7. Send complaint to dean");
+        System.out.println("  8. Send message");
+        System.out.println("  9. View inbox");
+        System.out.println(" 10. View news");
+        System.out.println(" 11. Mark attendance");
+        System.out.println("  0. Logout");
+        System.out.print("Choice: ");
+
+        switch (scanner.nextLine().trim()) {
+            case "1" -> {
+                System.out.println("=== My Courses ===");
+                teacher.getTaughtCourses().forEach(c -> System.out.println("  " + c.getTitle() + " (" + c.getCourseId() + ")"));
+            }
+            case "2" -> {
+                System.out.print("Course code: ");
+                String courseCode = scanner.nextLine().trim();
+                findCourseByCode(courseCode).ifPresentOrElse(course -> {
+                    System.out.print("Student login: ");
+                    findByLogin(scanner.nextLine().trim()).ifPresentOrElse(u -> {
+                        if (!(u instanceof Student)) {
+                            System.out.println("Not a student.");
+                            return;
+                        }
+                        Student s = (Student) u;
+                        try {
+                            System.out.print("First attestation (0-30): ");
+                            double att1 = Double.parseDouble(scanner.nextLine());
+                            System.out.print("Second attestation (0-30): ");
+                            double att2 = Double.parseDouble(scanner.nextLine());
+                            System.out.print("Final exam (0-40): ");
+                            double finalExam = Double.parseDouble(scanner.nextLine());
+                            Mark mark = new Mark(att1, att2, finalExam);
+                            teacher.putMark(s, course, mark);
+                            System.out.println("Grade assigned!");
+                        } catch (NumberFormatException e) {
+                            System.out.println("Invalid number format.");
+                        }
+                    }, () -> System.out.println("Student not found."));
+                }, () -> System.out.println("Course not found."));
+            }
+            case "3" -> {
+                System.out.print("Course code: ");
+                String courseCode = scanner.nextLine().trim();
+                findCourseByCode(courseCode).ifPresentOrElse(course -> {
+                    System.out.println("=== Students in " + course.getTitle() + " ===");
+                    // Assuming Course has getStudents() method
+                }, () -> System.out.println("Course not found."));
+            }
+            case "4" -> {
+                System.out.println("Sort by: 1-citations, 2-date, 3-pages");
+                System.out.print("Choice: ");
+                String choice = scanner.nextLine().trim();
+                Comparator<ResearchPaper> comp = switch (choice) {
+                    case "2" -> UniversityComparators.PAPER_BY_DATE_DESC;
+                    case "3" -> UniversityComparators.PAPER_BY_PAGES_DESC;
+                    default -> UniversityComparators.PAPER_BY_CITATIONS_DESC;
+                };
+                teacher.printPapers(comp);
+            }
+            case "5" -> {
+                System.out.print("Title: ");
+                String title = scanner.nextLine().trim();
+                System.out.print("Journal: ");
+                String journal = scanner.nextLine().trim();
+                System.out.print("DOI: ");
+                String doi = scanner.nextLine().trim();
+                System.out.print("Citations: ");
+                try {
+                    int citations = Integer.parseInt(scanner.nextLine().trim());
+                    System.out.print("Pages: ");
+                    int pages = Integer.parseInt(scanner.nextLine().trim());
+                    ResearchPaper paper = new ResearchPaper(title, List.of(teacher.getFullName()),
+                            journal, pages, citations, new Date(), doi);
+                    teacher.publishPaper(paper);
+                    System.out.println("Paper added! H-index: " + teacher.calculateHIndex());
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid number.");
+                }
+            }
+            case "6" -> System.out.println("Your rating: " + TeacherRating.getRating(teacher));
+            case "7" -> {
+                System.out.print("Student login: ");
+                String studentLogin = scanner.nextLine().trim();
+                findByLogin(studentLogin).ifPresentOrElse(u -> {
+                    if (!(u instanceof Student)) {
+                        System.out.println("Not a student.");
+                        return;
+                    }
+                    System.out.print("Complaint text: ");
+                    String text = scanner.nextLine().trim();
+                    System.out.print("Urgency level (LOW/MEDIUM/HIGH): ");
+                    try {
+                        UrgencyLevel level = UrgencyLevel.valueOf(scanner.nextLine().trim().toUpperCase());
+                        teacher.sendComplaint((Student) u, level, text);
+                        System.out.println("Complaint sent!");
+                    } catch (IllegalArgumentException e) {
+                        System.out.println("Invalid urgency level.");
+                    }
+                }, () -> System.out.println("Student not found."));
+            }
+            case "8" -> sendMessageMenu(teacher);
+            case "9" -> printMessages(teacher);
+            case "10" -> getNews().forEach(System.out::println);
+            case "11" -> markAttendanceMenu(teacher);
+            case "0" -> logout();
+            default -> System.out.println("Invalid choice.");
+        }
+    }
+
+    // =========================================================
+    // STUDENT MENU
+    // =========================================================
+    private static void showStudentMenu(Student student) {
+        System.out.println("\n+-- STUDENT MENU --+");
+        System.out.println("  1. View available courses");
+        System.out.println("  2. Register for course");
+        System.out.println("  3. My courses");
+        System.out.println("  4. View transcript");
+        System.out.println("  5. Rate teacher");
+        System.out.println("  6. View news");
+        System.out.println("  7. Join organization");
+        System.out.println("  8. Switch language");
+        System.out.println("  9. View teacher info");
+        System.out.println("  0. Logout");
+        System.out.print("Choice: ");
+
+        switch (scanner.nextLine().trim()) {
+            case "1" -> {
+                System.out.println("=== Available Courses ===");
+                getCourses().forEach(c -> System.out.printf("  %s - %s (%d credits)%n",
+                        c.getCourseId(), c.getTitle(), c.getCredits()));
+            }
+            case "2" -> {
+                System.out.print("Course code: ");
+                String courseCode = scanner.nextLine().trim();
+                findCourseByCode(courseCode).ifPresentOrElse(course -> {
+                    if (student.registerCourse(course)) {
+                        System.out.println("Course registered!");
+                    } else {
+                        System.out.println("Course registration failed.");
+                    }
+                }, () -> System.out.println("Course not found."));
+            }
+            case "3" -> {
+                System.out.println("=== My Courses ===");
+                student.getEnrolledCourses().forEach(c -> System.out.println("  " + c.getTitle()));
+            }
+            case "4" -> {
+                Transcript transcript = student.viewTranscript();
+                System.out.println("GPA: " + transcript.getGpa());
+            }
+            case "5" -> {
+                System.out.print("Teacher login: ");
+                findByLogin(scanner.nextLine().trim()).ifPresentOrElse(u -> {
+                    if (!(u instanceof Teacher)) {
+                        System.out.println("Not a teacher.");
+                        return;
+                    }
+                    System.out.print("Rating (1-5): ");
+                    try {
+                        int rating = Integer.parseInt(scanner.nextLine().trim());
+                        student.rateTeacher((Teacher) u, rating);
+                        System.out.println("Rating submitted!");
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid number.");
+                    }
+                }, () -> System.out.println("Teacher not found."));
+            }
+            case "6" -> getNews().forEach(System.out::println);
+            case "7" -> {
+                System.out.print("Organization ID: ");
+                String orgId = scanner.nextLine().trim();
+                findOrganizationById(orgId).ifPresentOrElse(
+                        student::joinOrganization,
+                        () -> System.out.println("Organization not found."));
+            }
+            case "8" -> {
+                System.out.print("Language (EN/RU/KZ): ");
+                try {
+                    Language lang = Language.valueOf(scanner.nextLine().trim().toUpperCase());
+                    student.switchLanguage(lang);
+                    System.out.println("Language switched to " + student.getLanguage());
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Invalid language.");
+                }
+            }
+            case "9" -> {
+                System.out.print("Course code: ");
+                String courseCode = scanner.nextLine().trim();
+                findCourseByCode(courseCode).ifPresentOrElse(course -> {
+                    System.out.print("Lesson type (LECTURE/PRACTICE): ");
+                    try {
+                        LessonType type = LessonType.valueOf(scanner.nextLine().trim().toUpperCase());
+                        System.out.println(student.viewTeacherInfo(course, type));
+                    } catch (IllegalArgumentException e) {
+                        System.out.println("Invalid lesson type.");
+                    }
+                }, () -> System.out.println("Course not found."));
+            }
+            case "0" -> logout();
+            default -> System.out.println("Invalid choice.");
+        }
+    }
+
+    // =========================================================
+    // MANAGER MENU
+    // =========================================================
+    private static void showManagerMenu(Manager manager) {
+        System.out.println("\n+-- MANAGER MENU --+");
+        System.out.println("  1. Add course");
+        System.out.println("  2. Assign teacher to course");
+        System.out.println("  3. Approve student registration");
+        System.out.println("  4. View students by GPA");
+        System.out.println("  5. View students by name");
+        System.out.println("  6. View all teachers");
+        System.out.println("  7. Generate report");
+        System.out.println("  8. Publish news");
+        System.out.println("  9. View news");
+        System.out.println(" 10. Send message");
+        System.out.println(" 11. View inbox");
+        System.out.println("  0. Logout");
+        System.out.print("Choice: ");
+
+        switch (scanner.nextLine().trim()) {
+            case "1" -> {
+                System.out.print("Course code: ");
+                String code = scanner.nextLine().trim();
+                System.out.print("Title: ");
+                String title = scanner.nextLine().trim();
+                System.out.print("Credits: ");
+                try {
+                    int credits = Integer.parseInt(scanner.nextLine().trim());
+                    System.out.print("School: ");
+                    String school = scanner.nextLine().trim();
+                    System.out.print("Year: ");
+                    int year = Integer.parseInt(scanner.nextLine().trim());
+                    System.out.print("Course type (MAJOR/MINOR/FREE_ELECTIVE): ");
+                    CourseType type = CourseType.valueOf(scanner.nextLine().trim().toUpperCase());
+                    Course course = new Course(code, title, credits, school, year, type);
+                    manager.addCourseForRegistration(course, year, school);
+                    storage.addCourse(course);
+                    System.out.println("Course added!");
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid number.");
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Invalid course type.");
+                }
+            }
+            case "2" -> {
+                System.out.print("Teacher login: ");
+                String teacherLogin = scanner.nextLine().trim();
+                System.out.print("Course code: ");
+                String courseCode = scanner.nextLine().trim();
+                System.out.print("Lesson type (LECTURE/PRACTICE): ");
+                try {
+                    LessonType type = LessonType.valueOf(scanner.nextLine().trim().toUpperCase());
+                    findByLogin(teacherLogin).ifPresentOrElse(u -> {
+                        if (!(u instanceof Teacher)) {
+                            System.out.println("Not a teacher.");
+                            return;
+                        }
+                        findCourseByCode(courseCode).ifPresentOrElse(course -> {
+                            manager.assignCourseToTeacher(course, (Teacher) u, type);
+                            System.out.println("Teacher assigned!");
+                        }, () -> System.out.println("Course not found."));
+                    }, () -> System.out.println("Teacher not found."));
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Invalid lesson type.");
+                }
+            }
+            case "3" -> {
+                System.out.print("Student login: ");
+                String studentLogin = scanner.nextLine().trim();
+                System.out.print("Course code: ");
+                String courseCode = scanner.nextLine().trim();
+                findByLogin(studentLogin).ifPresentOrElse(u -> {
+                    if (!(u instanceof Student)) {
+                        System.out.println("Not a student.");
+                        return;
+                    }
+                    findCourseByCode(courseCode).ifPresentOrElse(course -> {
+                        manager.approveRegistration((Student) u, course);
+                        System.out.println("Registration approved!");
+                    }, () -> System.out.println("Course not found."));
+                }, () -> System.out.println("Student not found."));
+            }
+            case "4" -> {
+                List<Student> students = manager.viewAllStudents(SortBy.GPA);
+                students.forEach(s -> System.out.printf("  %s - GPA: %.2f%n", s.getFullName(), s.getGpa()));
+            }
+            case "5" -> {
+                List<Student> students = manager.viewAllStudents(SortBy.NAME);
+                students.forEach(s -> System.out.println("  " + s.getFullName()));
+            }
+            case "6" -> manager.viewAllTeachers();
+            case "7" -> System.out.println(manager.generateStatisticalReport());
+            case "8" -> {
+                System.out.print("Title: ");
+                String title = scanner.nextLine().trim();
+                System.out.print("Content: ");
+                String content = scanner.nextLine().trim();
+                News item = new News(title, content, NewsType.NORMAL);
+                news.add(item);
+                manager.manageNews(item, "add");
+                System.out.println("News published!");
+            }
+            case "9" -> getNews().forEach(System.out::println);
+            case "10" -> sendMessageMenu(manager);
+            case "11" -> printMessages(manager);
+            case "0" -> logout();
+            default -> System.out.println("Invalid choice.");
+        }
+    }
+
+    // =========================================================
+    // TECH SUPPORT MENU
+    // =========================================================
+    private static void showTechSupportMenu(TechSupportSpecialist support) {
+        System.out.println("\n+-- TECH SUPPORT MENU --+");
+        System.out.println("  1. View all requests");
+        System.out.println("  2. Update request status");
+        System.out.println("  3. Send message");
+        System.out.println("  4. View inbox");
+        System.out.println("  0. Logout");
+        System.out.print("Choice: ");
+
+        switch (scanner.nextLine().trim()) {
+            case "1" -> support.viewRequests().forEach(System.out::println);
+            case "2" -> {
+                System.out.print("Request ID: ");
+                String requestId = scanner.nextLine().trim();
+                findRequestById(requestId).ifPresentOrElse(request -> {
+                    System.out.println("Current status: " + request.getStatus());
+                    System.out.print("New status (PENDING/ACCEPTED/REJECTED/DONE/VIEWED): ");
+                    try {
+                        RequestStatus status = RequestStatus.valueOf(scanner.nextLine().trim().toUpperCase());
+                        support.updateRequestStatus(request, status);
+                        System.out.println("Status updated!");
+                    } catch (IllegalArgumentException e) {
+                        System.out.println("Invalid status.");
+                    }
+                }, () -> System.out.println("Request not found."));
+            }
+            case "3" -> sendMessageMenu(support);
+            case "4" -> printMessages(support);
+            case "0" -> logout();
+            default -> System.out.println("Invalid choice.");
+        }
+    }
+
+    // =========================================================
+    // HELPER METHODS (using your existing storage)
+    // =========================================================
+
+    private static Optional<User> findByLogin(String login) {
+        return storage.getUsers().stream()
+                .filter(u -> u.getEmail().equals(login))
+                .findFirst();
+    }
+
+    private static Optional<Course> findCourseByCode(String code) {
+        return storage.getCourses().stream()
+                .filter(c -> c.getCourseId().equals(code))
+                .findFirst();
+    }
+
+    private static Optional<Organization> findOrganizationById(String id) {
+        // You would need to get organizations from your storage
+        return Optional.empty();
+    }
+
+    private static Optional<Request> findRequestById(String id) {
+        return requests.stream()
+                .filter(r -> r.getRequestInfo().contains("#" + id + " "))
+                .findFirst();
+    }
+
+    private static List<Course> getCourses() {
+        return storage.getCourses();
+    }
+
+    private static List<News> getNews() {
+        return news;
+    }
+
+    private static void markAttendanceMenu(Teacher teacher) {
+        System.out.print("Course code: ");
+        String courseCode = scanner.nextLine().trim();
+        findCourseByCode(courseCode).ifPresentOrElse(course -> {
+            System.out.print("Student login: ");
+            findByLogin(scanner.nextLine().trim()).ifPresentOrElse(u -> {
+                if (!(u instanceof Student)) {
+                    System.out.println("Not a student.");
+                    return;
+                }
+                System.out.print("Lesson type (LECTURE/PRACTICE): ");
+                try {
+                    LessonType type = LessonType.valueOf(scanner.nextLine().trim().toUpperCase());
+                    System.out.print("Status (PRESENT/ABSENT/LATE/EXCUSED): ");
+                    AttendanceStatus status = AttendanceStatus.valueOf(scanner.nextLine().trim().toUpperCase());
+                    // Find lesson by type
+                    course.getLessons().stream()
+                            .filter(l -> l.getType() == type)
+                            .findFirst()
+                            .ifPresent(lesson -> {
+                                AttendanceService service = new AttendanceService();
+                                service.markAttendance((Student) u, lesson, status);
+                                System.out.println("Attendance marked!");
+                            });
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Invalid input.");
+                }
+            }, () -> System.out.println("Student not found."));
+        }, () -> System.out.println("Course not found."));
+    }
+
+    private static void sendMessageMenu(Employee sender) {
+        System.out.print("Recipient login: ");
+        findByLogin(scanner.nextLine().trim()).ifPresentOrElse(recipient -> {
+            if (!(recipient instanceof Employee)) {
+                System.out.println("Recipient is not an employee.");
+                return;
+            }
+            System.out.print("Message: ");
+            String text = scanner.nextLine().trim();
+            sender.sendMessage((Employee) recipient, text);
+            System.out.println("Message sent!");
+        }, () -> System.out.println("User not found."));
+    }
+
+    private static User createUserByType(String type, String id, String name, String login, String password) {
+        Date now = new Date();
+        return switch (type.toLowerCase()) {
+            case "student" -> new Student(id, name, login, password, "EN", "S-" + id, "SITE", 1, 0.0, 0, new ArrayList<>(), new ArrayList<>());
+            case "teacher" -> new Teacher(id, name, login, password, "EN", 300000, now, "EMP-" + id, "T-" + id, TeacherPosition.LECTOR, new ArrayList<>());
+            case "manager" -> new Manager(id, name, login, password, "EN", 400000, now, "MAN-" + id, ManagerType.DEPARTMENT_MANAGER, "SITE");
+            case "admin" -> new Admin(id, name, login, password, "EN", 500000, now, "ADM-" + id);
+            case "tech" -> new TechSupportSpecialist(id, name, login, password, "EN", 350000, now, "SUP-" + id);
+            default -> null;
+        };
+    }
+
+    private static void logout() {
+        System.out.println("Goodbye, " + currentUser.getFullName() + "!");
+        currentUser.logout();
+        currentUser = null;
+    }
+
+    private static void printMessages(Employee employee) {
+        List<models.Message> messages = employee.viewMessages();
+        if (messages.isEmpty()) {
+            System.out.println("Inbox is empty.");
+            return;
+        }
+        messages.forEach(System.out::println);
+    }
+
+    // =========================================================
+    // SEED DATA (using your existing classes)
+    // =========================================================
+    private static void seedData() {
+        Date now = new Date();
+
+        if (!storage.getUsers().isEmpty()) return;
+
+        Admin admin = new Admin("a1", "Admin", "admin", "admin123", "EN", 500000, now, "ADM-1");
+        Teacher teacher = new Teacher("t1", "Professor Ada", "ada", "ada123", "EN", 600000, now, "EMP-T1", "T-1", TeacherPosition.PROFESSOR, new ArrayList<>());
+        Student student = new Student("s1", "Bob", "bob", "bob123", "EN", "S-1", "SITE", 2, 3.6, 0, new ArrayList<>(), new ArrayList<>());
+        Student student2 = new Student("s2", "Alice", "alice", "alice123", "EN", "S-2", "SITE", 2, 3.95, 0, new ArrayList<>(), new ArrayList<>());
+        Manager manager = new Manager("m1", "Manager Asel", "asel", "asel123", "EN", 450000, now, "MAN-1", ManagerType.DEPARTMENT_MANAGER, "SITE");
+        TechSupportSpecialist support = new TechSupportSpecialist("ts1", "Tech Support", "support", "support123", "EN", 300000, now, "SUP-1");
+
+        storage.addUser(admin);
+        storage.addUser(teacher);
+        storage.addUser(student);
+        storage.addUser(student2);
+        storage.addUser(manager);
+        storage.addUser(support);
 
         Course course = new Course("CS101", "Object-Oriented Programming", 5, "SITE", 2, CourseType.MAJOR);
-        Course elective = new Course("HUM101", "Communication", 3, "HUM", 2, CourseType.MINOR);
-        Course freeCourse = new Course("FREE101", "Free Elective", 2, "ANY", 0, CourseType.FREE_ELECTIVE);
-
-        Teacher teacher = new Teacher("t1", "Professor Ada", "ada@uni.kz", "123", Language.EN.name(), 600000, now, "EMP-T1", "T-1", TeacherPosition.PROFESSOR, new ArrayList<>());
-        Student student = new Student("s1", "Student Bob", "bob@uni.kz", "123", Language.EN.name(), "S-1", "SITE", 2, 3.6, 0, new ArrayList<>(), new ArrayList<>());
-        Student student2 = new Student("s2", "Student Alice", "alice@uni.kz", "123", Language.EN.name(), "S-2", "SITE", 2, 3.95, 0, new ArrayList<>(), new ArrayList<>());
-        Student student3 = new Student("s3", "Student Dias", "dias@uni.kz", "123", Language.EN.name(), "S-3", "SITE", 2, 2.75, 0, new ArrayList<>(), new ArrayList<>());
-        Student student4 = new Student("s4", "Student Mira", "mira@uni.kz", "123", Language.EN.name(), "S-4", "SITE", 2, 3.2, 0, new ArrayList<>(), new ArrayList<>());
-        Student student5 = new Student("s5", "Student Nurlan", "nurlan@uni.kz", "123", Language.EN.name(), "S-5", "SITE", 2, 1.9, 0, new ArrayList<>(), new ArrayList<>());
-
-        manager.addStudent(student);
-        manager.addStudent(student2);
-        manager.addStudent(student3);
-        manager.addStudent(student4);
-        manager.addStudent(student5);
-        manager.addTeacher(teacher);
-        manager.addCourseForRegistration(course, 2, "SITE");
-        manager.assignCourseToTeacher(course, teacher, LessonType.LECTURE);
-        manager.assignCourseToTeacher(course, teacher, LessonType.PRACTICE);
-        manager.approveRegistration(student, course);
-        manager.approveRegistration(student2, course);
-        manager.approveRegistration(student3, course);
-        manager.approveRegistration(student4, course);
-        manager.approveRegistration(student5, course);
-
-        Lesson lesson = new Lesson("L-1", LessonType.LECTURE, now, "09:00", "305", course, teacher);
-        course.addLesson(lesson);
-        Lesson practiceLesson = new Lesson("L-2", LessonType.PRACTICE, now, "11:00", "306", course, teacher);
-        course.addLesson(practiceLesson);
-
-        AttendanceService attendanceService = new AttendanceService();
-        AttendanceRecord attendance1 = attendanceService.markAttendance(student, lesson, AttendanceStatus.PRESENT);
-        attendanceService.markAttendance(student, practiceLesson, AttendanceStatus.LATE);
-        attendanceService.markAttendance(student2, lesson, AttendanceStatus.ABSENT);
-        attendanceService.markAttendance(student3, lesson, AttendanceStatus.EXCUSED);
-        attendanceService.markAttendance(student4, lesson, AttendanceStatus.PRESENT);
-        attendanceService.markAttendance(student5, lesson, AttendanceStatus.PRESENT);
-
-        Mark mark = new Mark(30, 30, 35);
-        teacher.putMark(student, course, mark);
-        Transcript transcript = student.viewTranscript();
-        student.rateTeacher(teacher, 5);
-
-        Organization organization = new Organization("ORG-1", "Dream Team Club");
-        student.joinOrganization(organization);
-        organization.electHead(student);
-        organization.setHead(student);
-
-        Request request = new Request("REQ-1", "Projector is not working", student);
-        support.updateRequestStatus(request, RequestStatus.PENDING);
-        System.out.println("Support viewed requests: " + support.viewRequests().size() + ", status after view: " + request.getStatus());
-        CommandInvoker commandInvoker = new CommandInvoker();
-        commandInvoker.execute(new RequestStatusCommand(support, request, RequestStatus.ACCEPTED));
-        commandInvoker.execute(new RequestStatusCommand(support, request, RequestStatus.DONE));
-
-        Message message = new Message(user, student, "Welcome to the system");
-        MessageService messageService = new MessageService();
-        messageService.sendMessage(user, student, message.getText());
-        employee.sendMessage(teacher, "Please check exam room booking.");
-        OfficialMessage officialMessage = new OfficialMessage(manager, teacher, "Exam room booking",
-                "Final exam for CS101 is planned in room 305.", now, "305");
-        System.out.println(officialMessage);
-
-        News news = new News("OOP Week", "Midterm week starts soon", NewsType.NORMAL);
-        Comment comment = new Comment("Good luck!", student);
-        news.addComment(comment);
-        manager.manageNews(news, "pin");
-
-        ResearchPaper paper1 = new ResearchPaper("Clean OOP Design", Arrays.asList("Professor Ada", "Student Bob"), "Dream Journal", 12, 8, now, "10.1000/oop1");
-        ResearchPaper paper2 = new ResearchPaper("University Systems", Arrays.asList("Professor Ada"), "Dream Journal", 4, 6, now, "10.1000/oop2");
-        ResearchPaper paper3 = new ResearchPaper("Research Analytics", Arrays.asList("Student Bob"), "Dream Journal", 2, 5, now, "10.1000/oop3");
-        List<ResearchPaper> papers = Arrays.asList(paper1, paper2, paper3);
-        teacher.publishPaper(paper2);
-        researchEmployee.publishPaper(paper3);
-
-        Researcher supervisor = new DemoResearcher(papers);
-        try {
-            GraduateStudent graduateStudent = new GraduateStudent("g1", "Graduate Cora", "cora@uni.kz", "123", Language.EN.name(), "G-1", "SITE", 1, 3.8, 0, new ArrayList<>(), new ArrayList<>(), "OOP thesis", supervisor);
-            MasterStudent masterStudent = new MasterStudent("ms1", "Master Dana", "dana@uni.kz", "123", Language.EN.name(), "M-1", "SITE", 1, 3.9, 0, new ArrayList<>(), new ArrayList<>(), "Master thesis", supervisor, 24);
-            PhDStudent phdStudent = new PhDStudent("phd1", "PhD Emir", "emir@uni.kz", "123", Language.EN.name(), "P-1", "SITE", 2, 4.0, 0, new ArrayList<>(), new ArrayList<>(), "PhD thesis", supervisor, "AI in education", papers);
-
-            ResearchProject project = new ResearchProject("Digital University", now, null);
-            project.addPaper(paper1);
-            graduateStudent.publishPaper(paper1);
-            graduateStudent.joinProject(project);
-            masterStudent.publishPaper(paper2);
-            phdStudent.publishPaper(paper3);
-            project.addParticipant(supervisor);
-
-            try {
-                project.addParticipant((Object) user);
-            } catch (NotResearcherException e) {
-                System.out.println("Expected research exception: " + e.getMessage());
-            }
-
-            ResearchAnalytics analytics = new ResearchAnalytics();
-            List<Researcher> researchers = Arrays.asList(supervisor, teacher, researchEmployee, graduateStudent, masterStudent, phdStudent);
-            List<Researcher> topResearchers = analytics.topCitedResearchers(researchers, 3);
-            Researcher topResearcherOfYear = analytics.topCitedResearcherOfYear(researchers, currentYear);
-            System.out.println("Top researchers: " + topResearchers.size());
-            System.out.println("Papers this year: " + analytics.papersByYear(papers, currentYear).size());
-            System.out.println("All researcher papers: " + analytics.allResearchPapers(researchers).size());
-            System.out.println("Top researcher of year exists: " + (topResearcherOfYear != null));
-            System.out.println("Top paper by pages: " + analytics.sortPapers(papers, UniversityComparators.PAPER_BY_PAGES_DESC).get(0).getTitle());
-            System.out.println("PhD topic: " + phdStudent.getDissertationTopic());
-            System.out.println("Master credits: " + masterStudent.getCourseWorkCredits());
-        } catch (SupervisorException e) {
-            System.out.println("Supervisor error: " + e.getMessage());
-        }
-
-        Journal journal = new Journal("Dream Journal");
-        journal.addObserver(messageText -> System.out.println("Journal observer: " + messageText));
-        journal.subscribe(student);
-        journal.publishPaper(paper1);
-        Subscription subscription = new Subscription(student, journal);
-        News researchNews = NewsGenerator.createFromPaper(paper1);
-        News topResearcherNews = NewsGenerator.createTopResearcherNews(student);
-
-        Report report = manager.generateStatisticalReport();
-        UserLog log = new UserLog(admin.getId(), "RUN_DEMO");
-        AuthenticationService auth = new AuthenticationService();
-        boolean loggedIn = auth.login(user, "user@uni.kz", "123");
-        auth.logout();
-
-        admin.addUser(user);
-        admin.addUser(student);
-        admin.updateUser(user);
-
-        DataStorage storage = DataStorage.getInstance();
-        storage.addUser(user);
-        storage.addUser(student);
         storage.addCourse(course);
-        storage.addResearchPaper(paper1);
-        storage.addResearchProject(new ResearchProject("Serializable storage check", now, null));
-        try {
-            String storagePath = "/tmp/oop_dream_team_storage.ser";
-            storage.save(storagePath);
-            DataStorage loadedStorage = DataStorage.load(storagePath);
-            new File(storagePath).delete();
-            System.out.println("Loaded storage users: " + loadedStorage.getUsers().size());
-        } catch (Exception e) {
-            System.out.println("Storage error: " + e.getMessage());
-        }
 
-        List<Student> sortedByManager = manager.viewAllStudents(SortBy.GPA);
-        List<Student> sortedByUtils = SortingUtils.sortStudents(sortedByManager, UniversityComparators.BY_GPA_DESC);
-        SortingStrategy<Student> studentStrategy = new ComparatorSortingStrategy<>(UniversityComparators.BY_NAME);
-        List<Student> sortedByStrategy = SortingUtils.sort(sortedByManager, studentStrategy);
-        List<Student> sortedByName = manager.viewAllStudents(SortBy.NAME);
-        List<Student> sortedById = manager.viewAllStudents(SortBy.ID);
-
-        RoomBooking roomBooking = new RoomBooking("305", "2026-05-18");
-        Observable observable = new DemoObservable();
-        Observer observer = messageText -> System.out.println("Observer received: " + messageText);
-        observable.addObserver(observer);
-        observable.notifyObservers("Schedule updated");
-        observable.removeObserver(observer);
-
-        Printable printable = () -> System.out.println(course);
-        Ratable ratable = new Ratable() {
-            private double total;
-            private int count;
-
-            @Override
-            public void addRating(double rating) {
-                total += rating;
-                count++;
-                System.out.println("Manual rating: " + rating);
-            }
-
-            @Override
-            public double getAverageRating() {
-                return count == 0 ? 0 : total / count;
-            }
-        };
-        printable.printInfo();
-        ratable.addRating(4.5);
-
-        System.out.println("Enums: " + Degree.MASTER + ", " + Degree.PHD + ", " + OrganizationRole.HEAD + ", " + OrganizationRole.MEMBER + ", " + RequestStatus.VIEWED + ", " + UrgencyLevel.HIGH);
-        System.out.println("Login ok: " + loggedIn);
-        System.out.println("Employee salary: " + employee.getSalary());
-        System.out.println("User language after switch: " + user.getLanguage());
-        System.out.println("Teacher info for lecture: " + student.viewTeacherInfo(course, LessonType.LECTURE));
-        System.out.println("Message: " + message.getText());
-        System.out.println("Comment: " + comment.getText());
-        System.out.println("Lesson: " + lesson.getLessonInfo());
-        System.out.println("Attendance sample: " + attendance1);
-        System.out.println("Attendance rate for " + student.getFullName() + ": " + attendanceService.calculateAttendanceRate(student));
-        System.out.println("Attendance records for lesson: " + attendanceService.getRecordsForLesson(lesson).size());
-        System.out.println("Mark: " + mark);
-        System.out.println("Transcript GPA: " + transcript.getGpa());
-        System.out.println("Teacher rating: " + TeacherRating.getRating(teacher));
-        System.out.println("Manual rating average: " + ratable.getAverageRating());
-        System.out.println("Request: " + request.getRequestInfo());
-        System.out.println("Report: " + report);
-        System.out.println("Log: " + log);
-        System.out.println("BibTeX: " + paper1.getCitation(Format.BIBTEX));
-        System.out.println("Plain citation: " + paper1.getCitation(Format.PLAIN_TEXT));
-        System.out.println("Subscription user: " + subscription.getUser().getFullName());
-        System.out.println("News: " + news.getTitle() + ", " + researchNews.getTitle() + ", " + topResearcherNews.getTitle());
-        System.out.println("Sorted students: " + sortedByUtils.size() + ", by strategy: " + sortedByStrategy.size() + ", by name: " + sortedByName.size() + ", by id: " + sortedById.size());
-        System.out.println("Storage users: " + storage.getUsers().size() + ", courses: " + storage.getCourses().size() + ", papers: " + storage.getResearchPapers().size());
-        System.out.println("Employee messages: " + employee.viewMessages().size() + ", teacher messages: " + teacher.viewMessages().size());
-        System.out.println("Command history: " + commandInvoker.getHistory().size());
-        System.out.println("Extra objects: " + officialMessage.getClass().getSimpleName() + ", " + roomBooking.getClass().getSimpleName() + ", " + elective.getTitle() + ", " + freeCourse.getTitle());
-        System.out.println("Admin report: " + admin.generateSystemReport());
-    }
-
-    private static class DemoResearcher implements Researcher {
-        private final List<ResearchPaper> papers;
-        private final List<ResearchProject> projects = new ArrayList<>();
-
-        private DemoResearcher(List<ResearchPaper> papers) {
-            this.papers = new ArrayList<>(papers);
-        }
-
-        @Override
-        public int calculateHIndex() {
-            return 3;
-        }
-
-        @Override
-        public void printPapers(java.util.Comparator<ResearchPaper> comparator) {
-            List<ResearchPaper> copy = new ArrayList<>(papers);
-            if (comparator != null) {
-                copy.sort(comparator);
-            }
-            for (ResearchPaper paper : copy) {
-                System.out.println(paper.getCitation(Format.PLAIN_TEXT));
-            }
-        }
-
-        @Override
-        public List<ResearchProject> getResearchProjects() {
-            return new ArrayList<>(projects);
-        }
-
-        @Override
-        public List<ResearchPaper> getResearchPapers() {
-            return new ArrayList<>(papers);
-        }
-
-        @Override
-        public void publishPaper(ResearchPaper paper) {
-            if (paper != null) {
-                papers.add(paper);
-            }
-        }
-
-        @Override
-        public void joinProject(ResearchProject project) {
-            if (project != null && !projects.contains(project)) {
-                projects.add(project);
-            }
-        }
-    }
-
-    private static class DemoObservable implements Observable {
-        private final List<Observer> observers = new ArrayList<>();
-
-        @Override
-        public void addObserver(Observer observer) {
-            if (observer != null && !observers.contains(observer)) {
-                observers.add(observer);
-            }
-        }
-
-        @Override
-        public void removeObserver(Observer observer) {
-            observers.remove(observer);
-        }
-
-        @Override
-        public void notifyObservers(String message) {
-            for (Observer observer : observers) {
-                observer.update(message);
-            }
-        }
+        System.out.println("=== Test data loaded ===");
+        System.out.println("Logins: admin/admin123 | ada/ada123 | bob/bob123 | alice/alice123 | asel/asel123 | support/support123");
     }
 }

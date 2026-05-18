@@ -37,4 +37,12 @@ public class News {
     public String getTitle() {
         return title;
     }
+
+    @Override
+    public String toString() {
+        return (pinned ? "[PINNED] " : "") +
+                title + "\n" +
+                content + "\n" +
+                "Type: " + type + " | Date: " + date + " | Comments: " + comments.size();
+    }
 }
