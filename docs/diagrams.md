@@ -1,6 +1,5 @@
 # Diagrams
 
-These diagrams reflect the current Java packages, core model capabilities, and the console flows in `Main`.
 
 ## Use Case Diagram
 
