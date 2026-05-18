@@ -1,7 +1,6 @@
-package OOP_dreamTeam.comparators;
+package comparators;
 
-import OOP_dreamTeam.
-models.ResearchPaper;
+import OOP_dreamTeam.models.ResearchPaper;
 import OOP_dreamTeam.models.Student;
 import OOP_dreamTeam.models.Teacher;
 
