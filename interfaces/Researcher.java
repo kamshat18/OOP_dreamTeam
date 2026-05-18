@@ -1,7 +1,7 @@
-package OOP_dreamTeam.interfaces;
+package interfaces;
 
-import OOP_dreamTeam.models.ResearchProject;
-import OOP_dreamTeam.models.ResearchPaper;
+import models.ResearchProject;
+import models.ResearchPaper;
 
 import java.util.Comparator;
 import java.util.List;

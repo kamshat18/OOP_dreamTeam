@@ -1,8 +1,8 @@
 package comparators;
 
-import OOP_dreamTeam.models.ResearchPaper;
-import OOP_dreamTeam.models.Student;
-import OOP_dreamTeam.models.Teacher;
+import models.ResearchPaper;
+import models.Student;
+import models.Teacher;
 
 import java.util.Comparator;
 

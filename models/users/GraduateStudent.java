@@ -1,11 +1,7 @@
-package OOP_dreamTeam.models;
+package models;
 
-import OOP_dreamTeam.interfaces.Researcher;
+import interfaces.Researcher;
 import exceptions.SupervisorException;
-import models.Course;
-import models.Mark;
-import models.Organization;
-import models.Student;
 
 import java.util.ArrayList;
 import java.util.Comparator;

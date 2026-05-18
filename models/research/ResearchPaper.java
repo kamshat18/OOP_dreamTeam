@@ -1,4 +1,4 @@
-package OOP_dreamTeam.models;
+package models;
 
 import enums.Format;
 
@@ -26,6 +26,9 @@ public class ResearchPaper implements Comparable<ResearchPaper> {
         this.doi = doi;
     }
 
+    public String getTitle() {
+        return title;
+    }
     public int getCitations() {
         return citations;
     }

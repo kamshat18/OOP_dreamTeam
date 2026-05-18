@@ -1,4 +1,4 @@
-package OOP_dreamTeam.interfaces;
+package interfaces;
 
 public interface Printable {
     void printInfo();

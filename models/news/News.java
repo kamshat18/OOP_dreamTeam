@@ -1,5 +1,7 @@
 package models;
 
+import enums.NewsType;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

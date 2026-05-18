@@ -1,6 +1,6 @@
-package OOP_dreamTeam.patterns;
-import OOP_dreamTeam.models.ResearchPaper;
-import OOP_dreamTeam.models.ResearchProject;
+package patterns;
+import models.ResearchPaper;
+import models.ResearchProject;
 import models.Course;
 import models.User;
 

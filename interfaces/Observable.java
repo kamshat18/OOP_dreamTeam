@@ -1,4 +1,4 @@
-package OOP_dreamTeam.interfaces;
+package interfaces;
 
 public interface Observable {
     void addObserver(Observer observer);

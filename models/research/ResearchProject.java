@@ -1,6 +1,6 @@
-package OOP_dreamTeam.models;
+package models;
 
-import OOP_dreamTeam.interfaces.Researcher;
+import interfaces.Researcher;
 import exceptions.NotResearcherException;
 
 import java.util.ArrayList;

@@ -1,8 +1,8 @@
-package OOP_dreamTeam.patterns;
-import OOP_dreamTeam.comparators.UniversityComparators;
-import OOP_dreamTeam.models.ResearchPaper;
-import OOP_dreamTeam.models.Student;
-import OOP_dreamTeam.models.Teacher;
+package patterns;
+import comparators.UniversityComparators;
+import models.ResearchPaper;
+import models.Student;
+import models.Teacher;
 
 import java.util.Comparator;
 import java.util.List;

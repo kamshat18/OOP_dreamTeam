@@ -1,4 +1,4 @@
-package OOP_dreamTeam.models;
+package models;
 
 import java.util.ArrayList;
 import java.util.Collections;
