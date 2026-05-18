@@ -335,6 +335,8 @@ public class Main {
                         System.out.println("Rating submitted!");
                     } catch (NumberFormatException e) {
                         System.out.println("Invalid number.");
+                    } catch (IllegalArgumentException e) {
+                        System.out.println("Invalid rating. Use number from 1 to 5.");
                     }
                 }, () -> System.out.println("Teacher not found."));
             }
@@ -452,8 +454,10 @@ public class Main {
                         return;
                     }
                     findCourseByCode(courseCode).ifPresentOrElse(course -> {
-                        manager.approveRegistration((Student) u, course);
-                        System.out.println("Registration approved!");
+                        boolean approved = manager.approveRegistration((Student) u, course);
+                        if (approved) System.out.println("Registration approved!");
+                        else System.out.println("Registration was not approved.");
+
                     }, () -> System.out.println("Course not found."));
                 }, () -> System.out.println("Student not found."));
             }

@@ -56,6 +56,7 @@ public class Teacher extends Employee implements Researcher, Serializable {
             Mark markI = newMarks.get(i);
             if (markI != null && markI.getCourse() != null && markI.getCourse().equals(course)) {
                 newMarks.set(i, mark);
+                student.setMarks(newMarks);
                 return;
             }
         }
