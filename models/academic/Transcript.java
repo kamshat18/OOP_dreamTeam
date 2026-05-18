@@ -1,9 +1,10 @@
-package models;
+package models.academic;
 
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import models.users.Student;
 
 public class Transcript implements Serializable {
     private Student student;

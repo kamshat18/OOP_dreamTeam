@@ -1,10 +1,11 @@
-package models;
+package models.users;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import models.auth.UserLog;
 
 public class Admin extends Employee {
     private final List<String> logFiles;

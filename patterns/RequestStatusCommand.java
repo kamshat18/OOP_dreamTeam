@@ -1,8 +1,8 @@
 package patterns;
 
 import enums.RequestStatus;
-import models.Request;
-import models.TechSupportSpecialist;
+import models.organization.Request;
+import models.users.TechSupportSpecialist;
 
 public class RequestStatusCommand implements Command {
     private final TechSupportSpecialist specialist;

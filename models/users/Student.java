@@ -1,10 +1,14 @@
-package models;
+package models.users;
 
 import enums.CourseType;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import models.academic.Course;
+import models.academic.Mark;
+import models.academic.TeacherRating;
+import models.academic.Transcript;
+import models.organization.Organization;
 
 public class Student extends User implements Serializable {
     private final String studentId;

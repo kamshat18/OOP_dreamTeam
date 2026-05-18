@@ -1,4 +1,4 @@
-package models;
+package models.auth;
 
 import java.io.Serializable;
 import java.util.Date;

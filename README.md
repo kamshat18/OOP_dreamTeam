@@ -28,7 +28,7 @@ Research-oriented university system for the OOP final project.
 
 ### Research module
 
-- `Researcher` is an interface used by graduate students and demo researchers.
+- `Researcher` is an interface used by teachers, graduate students, and research employees.
 - `ResearchPaper` stores title, authors, journal, citations, pages, publication date, and DOI.
 - `ResearchPaper.getCitation(Format)` supports `PLAIN_TEXT` and `BIBTEX`.
 - `ResearchProject` has topic, papers, participants, and throws `NotResearcherException` when a non-researcher joins.
@@ -43,13 +43,13 @@ Research-oriented university system for the OOP final project.
 - `News` supports comments and research news pinning.
 - `NewsGenerator` creates news from papers and top researchers.
 - `Journal` supports user subscriptions and Observer notifications when a new paper is published.
-- `Message`, `MessageService`, and `OfficialMessage` cover ordinary and official university messages.
+- `Message` and `OfficialMessage` cover ordinary and official university messages.
 
 ### Storage and patterns
 
 - `DataStorage` is a Singleton and supports serialization save/load.
 - `Journal` + `Observable`/`Observer` implement Observer.
-- `NewsGenerator` is used as a simple Factory.
+- `NewsFactory`, `PaperNewsFactory`, and `TopResearcherNewsFactory` implement Factory Method for research news.
 - `SortingStrategy` + `ComparatorSortingStrategy` implement Strategy for reusable sorting.
 - `Command`, `RequestStatusCommand`, and `CommandInvoker` implement Command for tech-support request actions.
 
@@ -57,31 +57,27 @@ Implemented design patterns count: 5.
 
 ## Enumerations
 
-The project uses enums for attendance status, course type, degree, citation format, language, lesson type, manager type, news type, organization role, request status, teacher position, sorting, and urgency.
+The project uses enums for attendance status, course type, citation format, language, lesson type, manager type, news type, request status, teacher position, sorting, and urgency.
 
 ## Demo coverage
 
-`Main` demonstrates:
+`Main` includes console flows for:
 
 - authentication;
 - language switching;
-- five students with different GPA values for average/min/max report;
 - course registration;
 - lecture and practice lessons;
-- attendance records and attendance rate;
+- attendance records;
 - teacher mark putting and teacher rating;
 - student teacher-info lookup;
 - student organization membership/head;
 - support request lifecycle including `VIEWED`;
-- Command-based request status changes;
 - ordinary and official messages;
-- news comments and research-generated news;
-- research papers, h-index, project participants, custom exceptions, paper sorting;
-- professor teacher and non-teacher research employee as researchers;
-- journal subscriptions and observer notifications;
+- research-generated news and top researcher news;
+- research papers, h-index, and paper sorting;
+- professor teacher as a researcher, with support for creating research employees;
 - data storage serialization save/load;
-- manager sorting by GPA/name/id;
-- Strategy-based sorting.
+- manager sorting by GPA/name.
 
 ## Remaining non-code deliverables
 

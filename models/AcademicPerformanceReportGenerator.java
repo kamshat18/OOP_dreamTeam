@@ -1,6 +1,7 @@
 package models;
 
 import java.util.List;
+import models.users.Student;
 
 public class AcademicPerformanceReportGenerator extends AbstractReportGenerator {
     private final List<Student> students;

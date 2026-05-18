@@ -1,12 +1,15 @@
-package models;
+package models.news;
 
 import enums.NewsType;
-
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import models.messaging.Comment;
 
-public class News {
+public class News implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private NewsType type;
     private String title;
     private String content;
@@ -14,13 +17,13 @@ public class News {
     private List<Comment> comments = new ArrayList<>();
     private boolean pinned;
 
-    public News(String title, String content,NewsType type) {
+    public News(String title, String content, NewsType type) {
         this.title = title;
         this.content = content;
         this.date = new Date();
         this.type = type;
         if (type == NewsType.RESEARCH) {
-        pin();
+            pin();
         }
     }
 

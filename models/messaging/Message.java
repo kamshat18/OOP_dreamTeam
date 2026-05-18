@@ -1,7 +1,8 @@
-package models;
+package models.messaging;
 
 import java.io.Serializable;
 import java.util.Date;
+import models.users.User;
 
 public class Message implements Serializable {
     private final User sender;

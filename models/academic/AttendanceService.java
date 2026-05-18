@@ -1,10 +1,10 @@
-package models;
+package models.academic;
 
 import enums.AttendanceStatus;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import models.users.Student;
 
 public class AttendanceService {
     private final List<AttendanceRecord> records = new ArrayList<>();

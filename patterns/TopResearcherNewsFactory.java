@@ -1,8 +1,8 @@
 package patterns;
 
 import enums.NewsType;
-import models.News;
-import models.User;
+import models.news.News;
+import models.users.User;
 
 public class TopResearcherNewsFactory extends NewsFactory {
     private final User researcher;

@@ -1,7 +1,6 @@
-package models;
+package models.research;
 
 import enums.Format;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;

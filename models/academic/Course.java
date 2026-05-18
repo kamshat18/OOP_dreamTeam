@@ -1,11 +1,12 @@
-package models;
+package models.academic;
 
 import enums.CourseType;
 import enums.LessonType;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import models.users.Student;
+import models.users.Teacher;
 
 public class Course implements Serializable {
     private String courseId;

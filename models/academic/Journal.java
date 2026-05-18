@@ -1,10 +1,11 @@
-package models;
+package models.academic;
 
 import interfaces.Observable;
 import interfaces.Observer;
-
 import java.util.ArrayList;
 import java.util.List;
+import models.research.ResearchPaper;
+import models.users.User;
 
 public class Journal implements Observable {
     private String name;

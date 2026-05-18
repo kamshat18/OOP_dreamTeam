@@ -1,11 +1,11 @@
-package models;
+package models.users;
 
 import enums.RequestStatus;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import models.organization.Request;
 
 public class TechSupportSpecialist extends Employee {
     private final List<Request> requests;

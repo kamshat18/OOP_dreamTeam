@@ -1,12 +1,10 @@
 package patterns;
-import comparators.UniversityComparators;
-import models.ResearchPaper;
-import models.Student;
-import models.Teacher;
 
+import comparators.UniversityComparators;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import models.users.Student;
 
 public class SortingUtils {
      public static List<Student> sortStudents(List<Student> students, Comparator<Student> comparator) {

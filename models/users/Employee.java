@@ -1,8 +1,9 @@
-package models;
+package models.users;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import models.messaging.Message;
 
 public class Employee extends User {
     private double salary;

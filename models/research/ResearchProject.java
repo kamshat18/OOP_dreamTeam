@@ -1,8 +1,7 @@
-package models;
+package models.research;
 
-import interfaces.Researcher;
 import exceptions.NotResearcherException;
-
+import interfaces.Researcher;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;

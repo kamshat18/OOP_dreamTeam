@@ -1,11 +1,13 @@
-package models;
+package models.users;
 
 import interfaces.Researcher;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import models.research.HIndexCalculator;
+import models.research.ResearchPaper;
+import models.research.ResearchProject;
 
 public class ResearchEmployee extends Employee implements Researcher {
     private final List<ResearchPaper> researchPapers;

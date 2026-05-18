@@ -1,10 +1,13 @@
-package models;
+package models.organization;
 
 import enums.RequestStatus;
-
+import java.io.Serializable;
 import java.util.Date;
+import models.users.User;
 
-public class Request {
+public class Request implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private String requestId;
     private String description;
     private User requester;
@@ -21,6 +24,9 @@ public class Request {
     public RequestStatus getStatus() {
         return status;
     }
+    public String getRequestId() {
+        return requestId;
+    }
     public void updateStatus(RequestStatus status) {
         this.status = status;
         if (status == RequestStatus.DONE || status == RequestStatus.REJECTED)  this.resolvedDate = new Date();
@@ -30,5 +36,10 @@ public class Request {
         if (resolvedDate != null) s += ", resolved at " + resolvedDate;
         s += ": " + description;
         return s;
+    }
+
+    @Override
+    public String toString() {
+        return getRequestInfo() + " | status: " + status;
     }
 }

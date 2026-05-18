@@ -1,12 +1,16 @@
-package models;
+package models.users;
 
-import interfaces.Researcher;
 import exceptions.SupervisorException;
-
+import interfaces.Researcher;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import models.academic.Course;
+import models.academic.Mark;
+import models.research.HIndexCalculator;
+import models.research.ResearchPaper;
+import models.research.ResearchProject;
 
 public class GraduateStudent extends Student implements Researcher {
     private String thesisTitle;

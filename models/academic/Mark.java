@@ -1,6 +1,7 @@
-package models;
+package models.academic;
 
 import java.io.Serializable;
+import models.users.Student;
 
 public class Mark implements Serializable {
     private double firstAttestation;

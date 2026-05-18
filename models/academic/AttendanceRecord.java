@@ -1,9 +1,9 @@
-package models;
+package models.academic;
 
 import enums.AttendanceStatus;
-
 import java.io.Serializable;
 import java.util.Date;
+import models.users.Student;
 
 public class AttendanceRecord implements Serializable {
     private final Student student;

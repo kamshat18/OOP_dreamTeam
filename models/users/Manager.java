@@ -1,13 +1,17 @@
-package models;
+package models.users;
 
 import enums.LessonType;
 import enums.ManagerType;
 import enums.SortBy;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import models.AcademicPerformanceReportGenerator;
+import models.Report;
+import models.academic.Course;
+import models.news.News;
+import models.organization.Request;
 
 public class Manager extends Employee {
     private final ManagerType managerType;

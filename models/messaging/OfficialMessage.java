@@ -1,6 +1,7 @@
-package models;
+package models.messaging;
 
 import java.util.Date;
+import models.users.User;
 
 public class OfficialMessage extends Message {
     private final String subject;

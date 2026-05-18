@@ -1,10 +1,9 @@
 package comparators;
 
-import models.ResearchPaper;
-import models.Student;
-import models.Teacher;
-
 import java.util.Comparator;
+import models.research.ResearchPaper;
+import models.users.Student;
+import models.users.Teacher;
 
 public class UniversityComparators {
     public static final Comparator<Student> BY_GPA_DESC = Comparator.comparingDouble(Student::getGpa).reversed();

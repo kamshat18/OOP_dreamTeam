@@ -1,4 +1,4 @@
-package models;
+package models.research;
 
 import java.util.ArrayList;
 import java.util.Collections;

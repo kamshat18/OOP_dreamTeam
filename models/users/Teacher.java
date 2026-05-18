@@ -1,14 +1,19 @@
-package models;
+package models.users;
 
 import enums.TeacherPosition;
 import enums.UrgencyLevel;
 import interfaces.Researcher;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import models.academic.Course;
+import models.academic.Mark;
+import models.organization.Request;
+import models.research.HIndexCalculator;
+import models.research.ResearchPaper;
+import models.research.ResearchProject;
 
 public class Teacher extends Employee implements Researcher, Serializable {
     private String teacherId;
@@ -67,14 +72,15 @@ public class Teacher extends Employee implements Researcher, Serializable {
         if (!taughtCourses.contains(course)) return new ArrayList<>();
         return course.getEnrolledStudents();
     }
-    public void sendComplaint(Student student, UrgencyLevel urgency, String reason) {
-        if (student == null || urgency == null || reason == null || reason.isEmpty()) return;
+    public Request sendComplaint(Student student, UrgencyLevel urgency, String reason) {
+        if (student == null || urgency == null || reason == null || reason.isEmpty()) return null;
         Request request = new Request(
-                "Request #" + System.currentTimeMillis(),
+                "REQ-" + System.currentTimeMillis(),
                 "Complaint about student " + student.getFullName() + ", urgency " + urgency + ": " + reason,
                 this
         );
         System.out.println(request.getRequestInfo());
+        return request;
     }
     public String viewStudentInfo(Student student) {
         if (student == null) return "";

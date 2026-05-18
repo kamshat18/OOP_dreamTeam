@@ -1,10 +1,12 @@
-package models;
+package models.users;
 
-import interfaces.Researcher;
 import exceptions.SupervisorException;
-
+import interfaces.Researcher;
 import java.util.ArrayList;
 import java.util.List;
+import models.academic.Course;
+import models.academic.Mark;
+import models.research.ResearchPaper;
 
 public class PhDStudent extends GraduateStudent {
     private String dissertationTopic;

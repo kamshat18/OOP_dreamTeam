@@ -1,8 +1,8 @@
 package patterns;
 
 import enums.NewsType;
-import models.News;
-import models.ResearchPaper;
+import models.news.News;
+import models.research.ResearchPaper;
 
 public class PaperNewsFactory extends NewsFactory {
     private final ResearchPaper paper;

@@ -1,9 +1,9 @@
-package models;
+package models.academic;
 
 import enums.LessonType;
-
 import java.io.Serializable;
 import java.util.Date;
+import models.users.Teacher;
 
 public class Lesson implements Serializable {
     private String lessonId;

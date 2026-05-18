@@ -1,8 +1,10 @@
-package models;
+package models.academic;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import models.users.Student;
+import models.users.Teacher;
 
 public class TeacherRating {
     private Student student;

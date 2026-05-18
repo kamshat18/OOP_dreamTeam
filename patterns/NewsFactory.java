@@ -1,6 +1,6 @@
 package patterns;
 
-import models.News;
+import models.news.News;
 
 public abstract class NewsFactory {
     public News generate() {

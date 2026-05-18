@@ -1,11 +1,10 @@
 package interfaces;
 
-import models.ResearchProject;
-import models.ResearchPaper;
-
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.List;
+import models.research.ResearchPaper;
+import models.research.ResearchProject;
 
 public interface Researcher extends Serializable {
     int calculateHIndex();

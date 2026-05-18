@@ -1,9 +1,10 @@
-package models;
+package models.users;
 
-import interfaces.Researcher;
 import exceptions.SupervisorException;
-
+import interfaces.Researcher;
 import java.util.List;
+import models.academic.Course;
+import models.academic.Mark;
 
 public class MasterStudent extends GraduateStudent {
     private int courseWorkCredits;

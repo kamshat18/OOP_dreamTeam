@@ -1,7 +1,6 @@
-package models;
+package models.research;
 
 import interfaces.Researcher;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
@@ -15,9 +14,22 @@ public class ResearchAnalytics {
         }
         return researchers.stream()
                 .filter(r -> r != null)
-                .sorted(Comparator.comparingInt(Researcher::calculateHIndex).reversed())
+                .sorted(Comparator.comparingInt(this::totalCitations).reversed())
                 .limit(limit)
                 .collect(Collectors.toList());
+    }
+
+    private int totalCitations(Researcher researcher) {
+        int total = 0;
+        if (researcher == null) {
+            return total;
+        }
+        for (ResearchPaper paper : researcher.getResearchPapers()) {
+            if (paper != null) {
+                total += paper.getCitations();
+            }
+        }
+        return total;
     }
 
     public List<ResearchPaper> papersByYear(List<ResearchPaper> papers, int year) {

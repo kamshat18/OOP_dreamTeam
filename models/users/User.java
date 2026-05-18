@@ -1,6 +1,6 @@
-package models;
-import enums.Language;
+package models.users;
 
+import enums.Language;
 import java.io.Serializable;
 import java.util.Objects;
 
