@@ -43,7 +43,7 @@ public class User implements Serializable {
         loggedIn = false;
     }
     public void changePassword(String newPassword) {
-        if (newPassword != null && !newPassword.isBlank()) {
+        if (newPassword != null && !newPassword.trim().isEmpty()) {
             this.password = newPassword;
         }
     }

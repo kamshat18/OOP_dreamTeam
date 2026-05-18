@@ -90,9 +90,10 @@ public class DataStorage implements Serializable {
     public static synchronized DataStorage load(String filePath) throws IOException, ClassNotFoundException {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filePath))) {
             Object obj = ois.readObject();
-            if (!(obj instanceof DataStorage loaded)) {
+            if (!(obj instanceof DataStorage)) {
                 throw new IOException("Invalid data format for DataStorage.");
             }
+            DataStorage loaded = (DataStorage) obj;
             instance = loaded;
             return instance;
         }

@@ -26,7 +26,7 @@ public class GraduateStudent extends Student implements Researcher {
     }
 
     public boolean defendThesis() {
-        return thesisTitle != null && !thesisTitle.isBlank() && !publishedPapers.isEmpty();
+        return thesisTitle != null && !thesisTitle.trim().isEmpty() && !publishedPapers.isEmpty();
     }
 
     public Researcher getSupervisor() {

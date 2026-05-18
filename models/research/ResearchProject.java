@@ -54,9 +54,10 @@ public class ResearchProject {
     }
 
     public boolean addParticipant(Object candidate) throws NotResearcherException {
-        if (!(candidate instanceof Researcher researcher)) {
+        if (!(candidate instanceof Researcher)) {
             throw new NotResearcherException("Participant must implement Researcher.");
         }
+        Researcher researcher = (Researcher) candidate;
         return addParticipant(researcher);
     }
 }
