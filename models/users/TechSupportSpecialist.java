@@ -17,6 +17,11 @@ public class TechSupportSpecialist extends Employee {
     }
 
     public List<Request> viewRequests() {
+        for (Request request : requests) {
+            if (request != null && request.getStatus() == RequestStatus.PENDING) {
+                request.updateStatus(RequestStatus.VIEWED);
+            }
+        }
         return Collections.unmodifiableList(requests);
     }
 

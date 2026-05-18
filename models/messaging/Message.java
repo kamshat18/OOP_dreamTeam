@@ -1,12 +1,13 @@
 package models;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Message {
-    private User sender;
-    private User receiver;
-    private String text;
-    private Date date;
+public class Message implements Serializable {
+    private final User sender;
+    private final User receiver;
+    private final String text;
+    private final Date date;
 
     public Message(User sender, User receiver, String text) {
         this.sender = sender;
@@ -17,5 +18,26 @@ public class Message {
 
     public String getText() {
         return text;
+    }
+
+    public User getSender() {
+        return sender;
+    }
+
+    public User getReceiver() {
+        return receiver;
+    }
+
+    public Date getDate() {
+        return new Date(date.getTime());
+    }
+
+    @Override
+    public String toString() {
+        return "[" + date + "] " +
+                (sender == null ? "unknown" : sender.getFullName()) +
+                " -> " +
+                (receiver == null ? "unknown" : receiver.getFullName()) +
+                ": " + text;
     }
 }

@@ -1,15 +1,14 @@
 package models;
 
-import enums.NewsType;
+import patterns.PaperNewsFactory;
+import patterns.TopResearcherNewsFactory;
 
 public class NewsGenerator {
     public static News createFromPaper(ResearchPaper paper) {
-        return new models.News("New paper", paper.getTitle(), NewsType.NORMAL);
+        return new PaperNewsFactory(paper).generate();
     }
     
     public static News createTopResearcherNews(User researcher) {
-    if (researcher == null) return null;
-
-    return new News("Top Researcher", researcher.getFullName(), NewsType.NORMAL);
+        return new TopResearcherNewsFactory(researcher).generate();
 }
 }

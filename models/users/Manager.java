@@ -68,20 +68,7 @@ public class Manager extends Employee {
         course.setMajor(major);
     }
     public Report generateStatisticalReport() {
-        if (students == null || students.isEmpty()) return new Report("Academic Performance Report", "No students");
-        double sum = 0, min = students.get(0).getGpa(), max = students.get(0).getGpa();
-        for (Student student : students) {
-            double curGpa = student.getGpa();
-            sum += curGpa;
-            if (curGpa < min) min = curGpa;
-            if (curGpa > max) max = curGpa;
-        }
-        String content =
-                "Total number of students: " + students.size() + "\n" +
-                        "Average GPA: " + sum / students.size() + "\n" +
-                        "Maximum GPA: " + max + "\n" +
-                        "Minimum GPA: " + min + "\n";
-        return new Report("Academic Performance Report", content);
+        return new AcademicPerformanceReportGenerator(students).generate();
     }
     public void manageNews(News news, String action) {
         if (news == null || action == null) return;

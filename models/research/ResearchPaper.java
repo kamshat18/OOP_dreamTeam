@@ -2,12 +2,13 @@ package models;
 
 import enums.Format;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-public class ResearchPaper implements Comparable<ResearchPaper> {
+public class ResearchPaper implements Comparable<ResearchPaper>, Serializable {
     private String title;
     private List<String> authors;
     private String journal;
@@ -34,11 +35,15 @@ public class ResearchPaper implements Comparable<ResearchPaper> {
     }
 
     public Date getPublicationDate() {
-        return publicationDate;
+        return publicationDate == null ? null : new Date(publicationDate.getTime());
     }
 
     public List<String> getAuthors() {
         return Collections.unmodifiableList(authors);
+    }
+
+    public int getPages() {
+        return pages;
     }
 
     public String getCitation(Format format) {

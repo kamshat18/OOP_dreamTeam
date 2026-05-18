@@ -1,4 +1,5 @@
 import comparators.UniversityComparators;
+import enums.AttendanceStatus;
 import enums.CourseType;
 import enums.Degree;
 import enums.Format;
@@ -20,6 +21,8 @@ import interfaces.Ratable;
 import interfaces.Researcher;
 import models.Admin;
 import models.AuthenticationService;
+import models.AttendanceRecord;
+import models.AttendanceService;
 import models.Comment;
 import models.Course;
 import models.Employee;
@@ -39,6 +42,7 @@ import models.PhDStudent;
 import models.Report;
 import models.Request;
 import models.ResearchAnalytics;
+import models.ResearchEmployee;
 import models.ResearchPaper;
 import models.ResearchProject;
 import models.RoomBooking;
@@ -51,19 +55,30 @@ import models.Transcript;
 import models.User;
 import models.UserLog;
 import patterns.DataStorage;
+import patterns.CommandInvoker;
+import patterns.ComparatorSortingStrategy;
+import patterns.RequestStatusCommand;
 import patterns.SortingUtils;
+import patterns.SortingStrategy;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
         Date now = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(now);
+        int currentYear = calendar.get(Calendar.YEAR);
 
         User user = new User("u1", "Simple User", "user@uni.kz", "123", Language.EN.name());
+        user.switchLanguage(Language.RU);
         Employee employee = new Employee("e1", "Base Employee", "employee@uni.kz", "123", Language.EN.name(), 250000, now, "EMP-1");
+        ResearchEmployee researchEmployee = new ResearchEmployee("re1", "Research Employee", "research@uni.kz", "123", Language.EN.name(), 500000, now, "RES-1");
         Admin admin = new Admin("a1", "System Admin", "admin@uni.kz", "123", Language.EN.name(), 400000, now, "ADM-1");
         Manager manager = new Manager("m1", "Academic Manager", "manager@uni.kz", "123", Language.EN.name(), 450000, now, "MAN-1", ManagerType.DEPARTMENT_MANAGER, "SITE");
         TechSupportSpecialist support = new TechSupportSpecialist("ts1", "Tech Support", "support@uni.kz", "123", Language.EN.name(), 300000, now, "SUP-1");
@@ -96,6 +111,16 @@ public class Main {
 
         Lesson lesson = new Lesson("L-1", LessonType.LECTURE, now, "09:00", "305", course, teacher);
         course.addLesson(lesson);
+        Lesson practiceLesson = new Lesson("L-2", LessonType.PRACTICE, now, "11:00", "306", course, teacher);
+        course.addLesson(practiceLesson);
+
+        AttendanceService attendanceService = new AttendanceService();
+        AttendanceRecord attendance1 = attendanceService.markAttendance(student, lesson, AttendanceStatus.PRESENT);
+        attendanceService.markAttendance(student, practiceLesson, AttendanceStatus.LATE);
+        attendanceService.markAttendance(student2, lesson, AttendanceStatus.ABSENT);
+        attendanceService.markAttendance(student3, lesson, AttendanceStatus.EXCUSED);
+        attendanceService.markAttendance(student4, lesson, AttendanceStatus.PRESENT);
+        attendanceService.markAttendance(student5, lesson, AttendanceStatus.PRESENT);
 
         Mark mark = new Mark(30, 30, 35);
         teacher.putMark(student, course, mark);
@@ -108,13 +133,19 @@ public class Main {
         organization.setHead(student);
 
         Request request = new Request("REQ-1", "Projector is not working", student);
-        support.acceptRequest(request);
-        support.markRequestDone(request);
+        support.updateRequestStatus(request, RequestStatus.PENDING);
+        System.out.println("Support viewed requests: " + support.viewRequests().size() + ", status after view: " + request.getStatus());
+        CommandInvoker commandInvoker = new CommandInvoker();
+        commandInvoker.execute(new RequestStatusCommand(support, request, RequestStatus.ACCEPTED));
+        commandInvoker.execute(new RequestStatusCommand(support, request, RequestStatus.DONE));
 
         Message message = new Message(user, student, "Welcome to the system");
         MessageService messageService = new MessageService();
         messageService.sendMessage(user, student, message.getText());
-        OfficialMessage officialMessage = new OfficialMessage();
+        employee.sendMessage(teacher, "Please check exam room booking.");
+        OfficialMessage officialMessage = new OfficialMessage(manager, teacher, "Exam room booking",
+                "Final exam for CS101 is planned in room 305.", now, "305");
+        System.out.println(officialMessage);
 
         News news = new News("OOP Week", "Midterm week starts soon", NewsType.NORMAL);
         Comment comment = new Comment("Good luck!", student);
@@ -125,6 +156,8 @@ public class Main {
         ResearchPaper paper2 = new ResearchPaper("University Systems", Arrays.asList("Professor Ada"), "Dream Journal", 4, 6, now, "10.1000/oop2");
         ResearchPaper paper3 = new ResearchPaper("Research Analytics", Arrays.asList("Student Bob"), "Dream Journal", 2, 5, now, "10.1000/oop3");
         List<ResearchPaper> papers = Arrays.asList(paper1, paper2, paper3);
+        teacher.publishPaper(paper2);
+        researchEmployee.publishPaper(paper3);
 
         Researcher supervisor = new DemoResearcher(papers);
         try {
@@ -147,9 +180,14 @@ public class Main {
             }
 
             ResearchAnalytics analytics = new ResearchAnalytics();
-            List<Researcher> topResearchers = analytics.topCitedResearchers(Arrays.asList(supervisor, graduateStudent, masterStudent, phdStudent), 3);
+            List<Researcher> researchers = Arrays.asList(supervisor, teacher, researchEmployee, graduateStudent, masterStudent, phdStudent);
+            List<Researcher> topResearchers = analytics.topCitedResearchers(researchers, 3);
+            Researcher topResearcherOfYear = analytics.topCitedResearcherOfYear(researchers, currentYear);
             System.out.println("Top researchers: " + topResearchers.size());
-            System.out.println("Papers this year: " + analytics.papersByYear(papers, now.getYear() + 1900).size());
+            System.out.println("Papers this year: " + analytics.papersByYear(papers, currentYear).size());
+            System.out.println("All researcher papers: " + analytics.allResearchPapers(researchers).size());
+            System.out.println("Top researcher of year exists: " + (topResearcherOfYear != null));
+            System.out.println("Top paper by pages: " + analytics.sortPapers(papers, UniversityComparators.PAPER_BY_PAGES_DESC).get(0).getTitle());
             System.out.println("PhD topic: " + phdStudent.getDissertationTopic());
             System.out.println("Master credits: " + masterStudent.getCourseWorkCredits());
         } catch (SupervisorException e) {
@@ -157,6 +195,7 @@ public class Main {
         }
 
         Journal journal = new Journal("Dream Journal");
+        journal.addObserver(messageText -> System.out.println("Journal observer: " + messageText));
         journal.subscribe(student);
         journal.publishPaper(paper1);
         Subscription subscription = new Subscription(student, journal);
@@ -178,9 +217,21 @@ public class Main {
         storage.addUser(student);
         storage.addCourse(course);
         storage.addResearchPaper(paper1);
+        storage.addResearchProject(new ResearchProject("Serializable storage check", now, null));
+        try {
+            String storagePath = "/tmp/oop_dream_team_storage.ser";
+            storage.save(storagePath);
+            DataStorage loadedStorage = DataStorage.load(storagePath);
+            new File(storagePath).delete();
+            System.out.println("Loaded storage users: " + loadedStorage.getUsers().size());
+        } catch (Exception e) {
+            System.out.println("Storage error: " + e.getMessage());
+        }
 
         List<Student> sortedByManager = manager.viewAllStudents(SortBy.GPA);
         List<Student> sortedByUtils = SortingUtils.sortStudents(sortedByManager, UniversityComparators.BY_GPA_DESC);
+        SortingStrategy<Student> studentStrategy = new ComparatorSortingStrategy<>(UniversityComparators.BY_NAME);
+        List<Student> sortedByStrategy = SortingUtils.sort(sortedByManager, studentStrategy);
         List<Student> sortedByName = manager.viewAllStudents(SortBy.NAME);
         List<Student> sortedById = manager.viewAllStudents(SortBy.ID);
 
@@ -214,9 +265,14 @@ public class Main {
         System.out.println("Enums: " + Degree.MASTER + ", " + Degree.PHD + ", " + OrganizationRole.HEAD + ", " + OrganizationRole.MEMBER + ", " + RequestStatus.VIEWED + ", " + UrgencyLevel.HIGH);
         System.out.println("Login ok: " + loggedIn);
         System.out.println("Employee salary: " + employee.getSalary());
+        System.out.println("User language after switch: " + user.getLanguage());
+        System.out.println("Teacher info for lecture: " + student.viewTeacherInfo(course, LessonType.LECTURE));
         System.out.println("Message: " + message.getText());
         System.out.println("Comment: " + comment.getText());
         System.out.println("Lesson: " + lesson.getLessonInfo());
+        System.out.println("Attendance sample: " + attendance1);
+        System.out.println("Attendance rate for " + student.getFullName() + ": " + attendanceService.calculateAttendanceRate(student));
+        System.out.println("Attendance records for lesson: " + attendanceService.getRecordsForLesson(lesson).size());
         System.out.println("Mark: " + mark);
         System.out.println("Transcript GPA: " + transcript.getGpa());
         System.out.println("Teacher rating: " + TeacherRating.getRating(teacher));
@@ -228,8 +284,10 @@ public class Main {
         System.out.println("Plain citation: " + paper1.getCitation(Format.PLAIN_TEXT));
         System.out.println("Subscription user: " + subscription.getUser().getFullName());
         System.out.println("News: " + news.getTitle() + ", " + researchNews.getTitle() + ", " + topResearcherNews.getTitle());
-        System.out.println("Sorted students: " + sortedByUtils.size() + ", by name: " + sortedByName.size() + ", by id: " + sortedById.size());
+        System.out.println("Sorted students: " + sortedByUtils.size() + ", by strategy: " + sortedByStrategy.size() + ", by name: " + sortedByName.size() + ", by id: " + sortedById.size());
         System.out.println("Storage users: " + storage.getUsers().size() + ", courses: " + storage.getCourses().size() + ", papers: " + storage.getResearchPapers().size());
+        System.out.println("Employee messages: " + employee.viewMessages().size() + ", teacher messages: " + teacher.viewMessages().size());
+        System.out.println("Command history: " + commandInvoker.getHistory().size());
         System.out.println("Extra objects: " + officialMessage.getClass().getSimpleName() + ", " + roomBooking.getClass().getSimpleName() + ", " + elective.getTitle() + ", " + freeCourse.getTitle());
         System.out.println("Admin report: " + admin.generateSystemReport());
     }

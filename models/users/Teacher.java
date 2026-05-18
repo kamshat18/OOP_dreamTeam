@@ -2,16 +2,20 @@ package models;
 
 import enums.TeacherPosition;
 import enums.UrgencyLevel;
+import interfaces.Researcher;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-public class Teacher extends Employee implements Serializable {
+public class Teacher extends Employee implements Researcher, Serializable {
     private String teacherId;
     private TeacherPosition position;
     private List<Course> taughtCourses;
+    private final List<ResearchPaper> researchPapers;
+    private final List<ResearchProject> researchProjects;
     public String getTeacherId() {
         return teacherId;
     }
@@ -30,6 +34,8 @@ public class Teacher extends Employee implements Serializable {
         this.teacherId = teacherId;
         this.position = position;
         this.taughtCourses = (taughtCourses == null) ? new ArrayList<>() : taughtCourses;
+        this.researchPapers = new ArrayList<>();
+        this.researchProjects = new ArrayList<>();
     }
     public void putMark(Student student, Course course, Mark mark) {
         if (student == null || course == null || mark == null) return;
@@ -49,7 +55,7 @@ public class Teacher extends Employee implements Serializable {
             }
         }
         newMarks.add(mark);
-//        student.setMarks(newMarks);
+        student.setMarks(newMarks);
     }
     public void manageCourse(Course course) {
         if (course == null) return;
@@ -89,5 +95,46 @@ public class Teacher extends Employee implements Serializable {
     @Override
     public String toString() {
         return "models.Teacher " + getFullName() + " with ID " + teacherId + ", position " + position + ", number taught courses " + (taughtCourses == null ? 0 : taughtCourses.size());
+    }
+
+    @Override
+    public int calculateHIndex() {
+        return HIndexCalculator.calculate(researchPapers);
+    }
+
+    @Override
+    public void printPapers(Comparator<ResearchPaper> comparator) {
+        List<ResearchPaper> copy = new ArrayList<>(researchPapers);
+        if (comparator != null) {
+            copy.sort(comparator);
+        }
+        for (ResearchPaper paper : copy) {
+            System.out.println(paper.getCitation(enums.Format.PLAIN_TEXT));
+        }
+    }
+
+    @Override
+    public List<ResearchProject> getResearchProjects() {
+        return new ArrayList<>(researchProjects);
+    }
+
+    @Override
+    public List<ResearchPaper> getResearchPapers() {
+        return new ArrayList<>(researchPapers);
+    }
+
+    @Override
+    public void publishPaper(ResearchPaper paper) {
+        if (paper != null) {
+            researchPapers.add(paper);
+        }
+    }
+
+    @Override
+    public void joinProject(ResearchProject project) {
+        if (project != null && !researchProjects.contains(project)) {
+            researchProjects.add(project);
+            project.addParticipant(this);
+        }
     }
 }

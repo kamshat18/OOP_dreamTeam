@@ -3,12 +3,13 @@ package models;
 import interfaces.Researcher;
 import exceptions.NotResearcherException;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-public class ResearchProject {
+public class ResearchProject implements Serializable {
     private String topic;
     private final List<ResearchPaper> publishedPapers;
     private final List<Researcher> participants;

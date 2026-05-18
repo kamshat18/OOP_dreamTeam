@@ -58,6 +58,12 @@ public class Student extends User implements Serializable {
         if (course == null || enrolledCourses.contains(course)) return false;
         if (credits + course.getCredits() > 21) return false;
         if (course.getYearOfStudy() != 0 && yearOfStudy != course.getYearOfStudy()) return false;
+        if (course.getCourseType() == CourseType.MAJOR) {
+            if (major == null || course.getMajor() == null || !major.equals(course.getMajor())) return false;
+        }
+        if (course.getCourseType() == CourseType.MINOR) {
+            if (major == null || course.getMajor() == null || major.equals(course.getMajor())) return false;
+        }
         int countRetakes = 0;
         for (Mark mark : marks) {
             if (mark != null &&
@@ -68,12 +74,6 @@ public class Student extends User implements Serializable {
         if (countRetakes >= 3) return false;
         if (course.getAvailableSeats() <= 0) return false;
         if (!course.addStudent(this)) return false;
-        if (course.getCourseType() == CourseType.MAJOR) {
-            if (major == null || course.getMajor() == null || !major.equals(course.getMajor())) return false;
-        }
-        if (course.getCourseType() == CourseType.MINOR) {
-            if (major == null || course.getMajor() == null || major.equals(course.getMajor()))return false;
-        }
         enrolledCourses.add(course);
         credits += course.getCredits();
         return true;
@@ -104,6 +104,11 @@ public class Student extends User implements Serializable {
     }
     public Transcript getTranscript() {
         return viewTranscript();
+    }
+    public String viewTeacherInfo(Course course, enums.LessonType lessonType) {
+        if (course == null || lessonType == null) return "";
+        Teacher teacher = course.getTeacherForLessonType(lessonType);
+        return teacher == null ? "No teacher assigned" : teacher.toString();
     }
     public void joinOrganization(Organization org) {
         if (org == null) return;

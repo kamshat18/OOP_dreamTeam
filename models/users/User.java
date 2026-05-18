@@ -1,4 +1,6 @@
 package models;
+import enums.Language;
+
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -45,6 +47,11 @@ public class User implements Serializable {
     public void changePassword(String newPassword) {
         if (newPassword != null && !newPassword.trim().isEmpty()) {
             this.password = newPassword;
+        }
+    }
+    public void switchLanguage(Language language) {
+        if (language != null) {
+            this.language = language.name();
         }
     }
     public boolean isLoggedIn() {
