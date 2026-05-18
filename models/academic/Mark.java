@@ -22,14 +22,24 @@ public class Mark {
     public Student getStudent() {
         return student;
     }
+    public double getFirstAttestation() { return firstAttestation; }
+    public double getSecondAttestation() { return secondAttestation; }
+    public double getFinalExam() { return finalExam; }
+
     public void setFirstAttestation(double firstAttestation) {
         this.firstAttestation = firstAttestation;
+        calculateTotal();
+        calculateLetterGrade();
     }
     public void setSecondAttestation(double secondAttestation) {
         this.secondAttestation = secondAttestation;
+        calculateTotal();
+        calculateLetterGrade();
     }
     public void setFinalExam(double finalExam) {
         this.finalExam = finalExam;
+        calculateTotal();
+        calculateLetterGrade();
     }
     public void setTotal(double total) {
         this.total = total;
@@ -39,6 +49,13 @@ public class Mark {
     }
     public void setStudent(Student student) {
         this.student = student;
+    }
+    public Mark(double firstAttestation, double secondAttestation, double finalExam) {
+        this.firstAttestation = firstAttestation;
+        this.secondAttestation = secondAttestation;
+        this.finalExam = finalExam;
+        calculateTotal();
+        calculateLetterGrade();
     }
     public double calculateTotal() {
         this.total = firstAttestation + secondAttestation + finalExam;
@@ -61,6 +78,6 @@ public class Mark {
     }
     @Override
     public String toString() {
-        return "models.Mark for " + student.getFullName() + " on " +  course.getTitle() + ": " + firstAttestation + "+" + secondAttestation + "+" + finalExam + "=" + total + " (" + letterGrade + ")";
+        return "models.Mark for " + (student == null ? "N/A" : student.getFullName()) + " on " +  (course == null ? "N/A" : course.getTitle()) + ": " + firstAttestation + "+" + secondAttestation + "+" + finalExam + "=" + total + " (" + letterGrade + ")";
     }
 }

@@ -52,17 +52,23 @@ public class Manager extends Employee {
             teachers.add(teacher);
         }
     }
+
+    public void assignCourseToTeacher(Course course, Teacher teacher) {
+        if (course == null || teacher == null) return;
+        if (course.getLectureTeacher() == null) assignCourseToTeacher(course, teacher, LessonType.LECTURE);
+        else assignCourseToTeacher(course, teacher, LessonType.PRACTICE);
+    }
     public boolean approveRegistration(Student student, Course course) {
         if (student == null || course == null) return false;
         return student.registerCourse(course);
     }
-    public void addCourseForRegistraion(Course course, int yearOfStudy, String major) {
+    public void addCourseForRegistration(Course course, int yearOfStudy, String major) {
         if (course == null) return;
         course.setYearOfStudy(yearOfStudy);
         course.setMajor(major);
     }
-    public String generateStatisticalReport() {
-        if (students == null || students.isEmpty()) return "No students";
+    public Report generateStatisticalReport() {
+        if (students == null || students.isEmpty()) return new Report("Academic Performance Report", "No students");
         double sum = 0, min = students.get(0).getGpa(), max = students.get(0).getGpa();
         for (Student student : students) {
             double curGpa = student.getGpa();
@@ -70,13 +76,16 @@ public class Manager extends Employee {
             if (curGpa < min) min = curGpa;
             if (curGpa > max) max = curGpa;
         }
-        return "Total number of students: " + students.size() + "\n" +
-                "Average GPA: " + sum / students.size() + "\n" +
-                "Maximum GPA: " + max + "\n" +
-                "Minimum GPA: " + min + "\n";
+        String content =
+                "Total number of students: " + students.size() + "\n" +
+                        "Average GPA: " + sum / students.size() + "\n" +
+                        "Maximum GPA: " + max + "\n" +
+                        "Minimum GPA: " + min + "\n";
+        return new Report("Academic Performance Report", content);
     }
     public void manageNews(News news, String action) {
         if (news == null || action == null) return;
+        if (action.equalsIgnoreCase("pin")) news.pin();
     }
     public List<Student> viewAllStudents(SortBy sortBy) {
         List<Student> studentsSorted = new ArrayList<>(students);
@@ -87,10 +96,10 @@ public class Manager extends Employee {
     }
     public List<Teacher> viewAllTeachers() {
         if (teachers == null) return new ArrayList<>();
-        return teachers;
+        return new ArrayList<>(teachers);
     }
     public List<Request> viewRequests() {
         if (requests == null) return new ArrayList<>();
-        return requests;
+        return new ArrayList<>(requests);
     }
 }

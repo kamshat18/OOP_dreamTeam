@@ -11,6 +11,15 @@ public class Teacher extends Employee {
     private String teacherId;
     private TeacherPosition position;
     private List<Course> taughtCourses;
+    public String getTeacherId() {
+        return teacherId;
+    }
+    public TeacherPosition getPosition() {
+        return position;
+    }
+    public List<Course> getTaughtCourses() {
+        return new ArrayList<>(taughtCourses);
+    }
 
     public Teacher(String id, String fullName, String email, String password, String language,
                    double salary, Date hireDate, String employeeId,
@@ -53,7 +62,12 @@ public class Teacher extends Employee {
     }
     public void sendComplaint(Student student, UrgencyLevel urgency, String reason) {
         if (student == null || urgency == null || reason == null || reason.isEmpty()) return;
-        System.out.println("Complaint from " + student.toString() + ", urgency " + urgency + ": " + reason);
+        Request request = new Request(
+                "Request #" + System.currentTimeMillis(),
+                "Complaint about student " + student.getFullName() + ", urgency " + urgency + ": " + reason,
+                this
+        );
+        System.out.println(request.getRequestInfo());
     }
     public String viewStudentInfo(Student student) {
         if (student == null) return "";
@@ -70,5 +84,9 @@ public class Teacher extends Employee {
     @Override
     public int hashCode() {
         return java.util.Objects.hash(teacherId);
+    }
+    @Override
+    public String toString() {
+        return "models.Teacher " + getFullName() + " with ID " + teacherId + ", position " + position + ", number taught courses " + (taughtCourses == null ? 0 : taughtCourses.size());
     }
 }
