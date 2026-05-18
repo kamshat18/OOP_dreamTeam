@@ -2,9 +2,10 @@ package models;
 
 import enums.LessonType;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Lesson {
+public class Lesson implements Serializable {
     private String lessonId;
     private LessonType type;
     private Date date;

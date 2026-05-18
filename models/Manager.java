@@ -10,11 +10,11 @@ import java.util.Date;
 import java.util.List;
 
 public class Manager extends Employee {
-    private ManagerType managerType;
-    private String department;
-    private List<Student> students = new ArrayList<>();
-    private List<Teacher> teachers = new ArrayList<>();
-    private List<Request> requests = new ArrayList<>();
+    private final ManagerType managerType;
+    private final String department;
+    private final List<Student> students = new ArrayList<>();
+    private final List<Teacher> teachers = new ArrayList<>();
+    private final List<Request> requests = new ArrayList<>();
 
 
     public Manager(String id, String fullName, String email, String password, String language,
@@ -91,7 +91,7 @@ public class Manager extends Employee {
         List<Student> studentsSorted = new ArrayList<>(students);
         if (sortBy == SortBy.NAME) studentsSorted.sort(Comparator.comparing(Student::getFullName));
         if (sortBy == SortBy.ID) studentsSorted.sort(Comparator.comparing(Student::getStudentId));
-        if (sortBy == SortBy.GPA) studentsSorted.sort(Comparator.comparingDouble(Student::getGpa));
+        if (sortBy == SortBy.GPA) studentsSorted.sort(Comparator.comparingDouble(Student::getGpa).reversed());
         return studentsSorted;
     }
     public List<Teacher> viewAllTeachers() {

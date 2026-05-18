@@ -3,11 +3,12 @@ package models;
 import enums.TeacherPosition;
 import enums.UrgencyLevel;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Teacher extends Employee {
+public class Teacher extends Employee implements Serializable {
     private String teacherId;
     private TeacherPosition position;
     private List<Course> taughtCourses;

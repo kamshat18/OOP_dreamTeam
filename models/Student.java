@@ -2,10 +2,11 @@ package models;
 
 import enums.CourseType;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Student extends User {
+public class Student extends User implements Serializable {
     private final String studentId;
     private String major;
     private int yearOfStudy;
@@ -33,7 +34,7 @@ public class Student extends User {
         return new ArrayList<>(enrolledCourses);
     }
     public List<Mark> getMarks() {
-        return marks;
+        return new ArrayList<>(marks);
     }
     void setMarks(List<Mark> marks) {
         this.marks = marks;
@@ -65,14 +66,14 @@ public class Student extends User {
                     "F".equals(mark.getLetterGrade())) countRetakes++;
         }
         if (countRetakes >= 3) return false;
+        if (course.getAvailableSeats() <= 0) return false;
+        if (!course.addStudent(this)) return false;
         if (course.getCourseType() == CourseType.MAJOR) {
             if (major == null || course.getMajor() == null || !major.equals(course.getMajor())) return false;
         }
         if (course.getCourseType() == CourseType.MINOR) {
             if (major == null || course.getMajor() == null || major.equals(course.getMajor()))return false;
         }
-        if (course.getAvailableSeats() <= 0) return false;
-        if (!course.addStudent(this)) return false;
         enrolledCourses.add(course);
         credits += course.getCredits();
         return true;

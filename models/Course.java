@@ -3,10 +3,11 @@ package models;
 import enums.CourseType;
 import enums.LessonType;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Course {
+public class Course implements Serializable {
     private String courseId;
     private String title;
     private int credits;
@@ -15,8 +16,8 @@ public class Course {
     private CourseType courseType;
     private Teacher lectureTeacher;
     private Teacher practiceTeacher;
-    private List<Student> enrolledStudents;
-    private List<Lesson> lessons;
+    private final List<Student> enrolledStudents;
+    private final List<Lesson> lessons;
 
     public Course(String courseId, String title, int credits, String major, int yearOfStudy, CourseType courseType) {
         this.courseId = courseId;
@@ -103,6 +104,17 @@ public class Course {
         if (type == null) return null;
         if (type == LessonType.LECTURE) return lectureTeacher;
         return practiceTeacher;
+    }
+
+    public boolean addLesson(Lesson lesson) {
+        if (lesson == null) return false;
+        if (lessons.contains(lesson)) return false;
+        return lessons.add(lesson);
+    }
+    public boolean removeLesson(Lesson lesson) {
+        if (lesson == null) return false;
+        if (!lessons.contains(lesson)) return false;
+        return lessons.remove(lesson);
     }
 
     @Override

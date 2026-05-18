@@ -1,10 +1,11 @@
 package models;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Transcript {
+public class Transcript implements Serializable {
     private Student student;
     private Map<Course, Mark> marks;
     private double gpa;
