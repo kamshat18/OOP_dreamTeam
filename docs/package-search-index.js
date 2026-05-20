@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html","k":"18"},{"l":"enums"},{"l":"interfaces"},{"l":"models"},{"l":"models.academic"},{"l":"models.auth"},{"l":"models.messaging"},{"l":"models.news"},{"l":"models.organization"},{"l":"models.research"},{"l":"models.users"},{"l":"patterns"}];updateSearchResults();

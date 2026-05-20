@@ -1,0 +1,11 @@
+enums
+interfaces
+models
+models.academic
+models.auth
+models.messaging
+models.news
+models.organization
+models.research
+models.users
+patterns
