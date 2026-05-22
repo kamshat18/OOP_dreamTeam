@@ -58,8 +58,8 @@ public class User implements Serializable {
         return loggedIn;
     }
     @Override
-    public String toString(){
-        return "User{id='" + id + "', name='" + fullName + "', email='" + email + "'}";
+    public String toString() {
+        return "models.User " + fullName + " with ID " + id + ", email " + email;
     }
     @Override
     public boolean equals(Object o){
